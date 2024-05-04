@@ -1,0 +1,159 @@
+openapi: 3.1.0
+info:
+  title: Sport Groups API
+  description: API documentation for BE diploma project.
+  version: "0.0.1"
+servers:
+  - url: 'https://example.com/api'
+tags:
+  - name: auth
+    description: Auth endpoint
+  - name: group
+    description: Groups endpoint
+paths:
+  /groups:
+    get:
+      tags:
+        - group
+      summary: Get all groups
+      responses:
+        '200':
+          description: An array of groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupsResponse'
+    post:
+      summary: Create a new group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+      responses:
+        '201':
+          description: Successfully created group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+  /groups/{id}:
+    get:
+      summary: Get a single group by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+    put:
+      summary: Update a group by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '200':
+          description: Successfully updated group
+    delete:
+      summary: Delete a group by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Successfully deleted group
+  /groups/join:
+    post:
+      summary: Join a group using a code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupJoinRequest'
+      responses:
+        '200':
+          description: Successfully joined group
+
+components:
+  schemas:
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        sport:
+          type: string
+        code:
+          type: string
+        owner:
+          $ref: '#/components/schemas/User'
+        createdAt:
+          type: string
+          format: date-time
+        editedAt:
+          type: string
+          format: date-time
+    GroupsResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Group'
+    GroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        sport:
+          type: string
+    GroupJoinRequest:
+      type: object
+      properties:
+        code:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        avatarUrl:
+          type: string
+        phone:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        sex:
+          $ref: '#/components/schemas/Sex'
+        address:
+          type: string
+    Sex:
+      type: string
+      enum:
+        - MALE
+        - FEMALE

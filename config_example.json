@@ -1,0 +1,19 @@
+{
+  "oauth": {
+    "google": {
+      "redirect_url": "http://localhost:5173"
+    }
+  },
+  "postgres": {
+    "password": "",
+    "log": true
+  },
+  "aws": {
+    "region": "eu-west-1",
+    "access_key_id": "",
+    "access_key_secret": "",
+    "s3": {
+      "bucket": ""
+    }
+  }
+}
