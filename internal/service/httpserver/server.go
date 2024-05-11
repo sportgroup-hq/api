@@ -35,5 +35,5 @@ func (s *Server) Start() error {
 
 	slog.Info("Starting HTTP server on " + s.cfg.HTTP.Address + "...")
 
-	return r.Run()
+	return r.Run(s.cfg.HTTP.Address)
 }
