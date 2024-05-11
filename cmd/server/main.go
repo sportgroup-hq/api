@@ -7,7 +7,7 @@ import (
 
 	"github.com/sportgroup-hq/api/internal/bootstrap"
 	"github.com/sportgroup-hq/api/internal/config"
-	"github.com/sportgroup-hq/api/internal/logger"
+	"github.com/sportgroup-hq/common-lib/logger"
 )
 
 func main() {

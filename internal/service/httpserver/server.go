@@ -2,35 +2,41 @@ package httpserver
 
 import (
 	"log/slog"
-	"math/rand"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sportgroup-hq/api/internal/config"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
+	"github.com/sportgroup-hq/common-lib/validation"
 )
 
-func (s Server) Start() error {
+func (s *Server) Start() error {
 	r := gin.Default()
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		validation.Register(v)
+	}
 
 	addOpenAPIDocsRouter(r)
 
-	cfg := config.Get()
-
-	r.GET("/", func(c *gin.Context) {
-		c.Header("Content-Type", "text/html")
-		c.String(200, `<html><head></head><body><a href="/oauth2callback">login</a></body></html>`)
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.Header("Content-Type", "text/html")
+		ctx.String(200, `<html><head></head><body><a href="http://localhost:8081/oauth2callback">login</a></body></html>`)
 	})
 
-	slog.Info("Starting HTTP server on " + cfg.HTTP.Address + "...")
+	authorized := r.Use(s.authMiddleware)
+
+	authorized.GET("/me", func(ctx *gin.Context) {
+		value, exists := ctx.Get("userID")
+		if !exists {
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+		ctx.String(200, "Hi, "+value.(uuid.UUID).String())
+	})
+
+	slog.Info("Starting HTTP server on " + s.cfg.HTTP.Address + "...")
 
 	return r.Run()
-}
-
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-func randString(n int) string {
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return string(b)
 }

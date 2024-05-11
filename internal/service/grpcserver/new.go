@@ -1,28 +1,43 @@
 package grpcserver
 
 import (
+	"context"
 	"log"
 	"log/slog"
 	"net"
 
+	"github.com/google/uuid"
 	"github.com/sportgroup-hq/api/internal/config"
-	"github.com/sportgroup-hq/api/internal/service"
+	"github.com/sportgroup-hq/api/internal/models"
 	"github.com/sportgroup-hq/common-lib/api"
 	"google.golang.org/grpc"
 )
 
+type UserService interface {
+	GetUserByID(ctx context.Context, userID uuid.UUID) (*models.User, error)
+	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
+	UserExistsByID(ctx context.Context, userID uuid.UUID) (bool, error)
+	UserExistsByEmail(ctx context.Context, email string) (bool, error)
+	CreateUser(ctx context.Context, user *models.User) (*models.User, error)
+}
+
 type Server struct {
 	api.UnimplementedApiServer
 
-	UserSrv service.User
+	cfg *config.Config
+
+	userSrv UserService
 }
 
-func New(userSrv service.User) *Server {
-	return &Server{UserSrv: userSrv}
+func New(cfg *config.Config, userSrv UserService) *Server {
+	return &Server{
+		cfg:     cfg,
+		userSrv: userSrv,
+	}
 }
 
 func (s *Server) Start() error {
-	lis, err := net.Listen("tcp", config.Get().GRPC.ApiAddress)
+	lis, err := net.Listen("tcp", s.cfg.GRPC.ApiAddress)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

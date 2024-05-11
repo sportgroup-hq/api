@@ -17,11 +17,15 @@ type User struct {
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
 	Email     string    `json:"email"`
-	AvatarURL string    `json:"avatarUrl"`
+	Picture   string    `json:"picture"`
 	//Role      Role      `json:"role" bun:",nullzero"`
 }
 
 func UserToPB(user *User) *api.User {
+	if user == nil {
+		return nil
+	}
+
 	return &api.User{
 		Id: user.ID.String(),
 	}

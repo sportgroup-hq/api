@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/sportgroup-hq/api/internal/config"
-	"github.com/sportgroup-hq/api/internal/repo"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
@@ -29,12 +28,4 @@ func New(cfg config.Postgres) *Postgres {
 	return &Postgres{
 		db: db,
 	}
-}
-
-func (p *Postgres) Auth() repo.Auth {
-	return p
-}
-
-func (p *Postgres) User() repo.User {
-	return p
 }

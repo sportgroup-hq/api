@@ -9,7 +9,6 @@ package bootstrap
 import (
 	"github.com/sportgroup-hq/api/internal/config"
 	"github.com/sportgroup-hq/api/internal/repo/postgres"
-	"github.com/sportgroup-hq/api/internal/service/auth"
 	"github.com/sportgroup-hq/api/internal/service/grpcserver"
 	"github.com/sportgroup-hq/api/internal/service/httpserver"
 	"github.com/sportgroup-hq/api/internal/service/user"
@@ -24,16 +23,15 @@ func Up() (*Dependencies, error) {
 	}
 	configPostgres := getPostgresConfig(configConfig)
 	postgresPostgres := postgres.New(configPostgres)
-	service := auth.New(configConfig, postgresPostgres)
-	userService := user.New(postgresPostgres)
-	server := httpserver.New(service, userService)
-	grpcserverServer := grpcserver.New(userService)
-	dependencies := NewDependencies(configConfig, server, grpcserverServer, service, userService, postgresPostgres)
+	service := user.New(postgresPostgres)
+	server := httpserver.New(configConfig, service)
+	grpcserverServer := grpcserver.New(configConfig, service)
+	dependencies := NewDependencies(configConfig, server, grpcserverServer, postgresPostgres)
 	return dependencies, nil
 }
 
 // wire.go:
 
-func getPostgresConfig(cfg config.Config) config.Postgres {
+func getPostgresConfig(cfg *config.Config) config.Postgres {
 	return cfg.Postgres
 }

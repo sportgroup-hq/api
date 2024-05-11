@@ -2,22 +2,57 @@ package postgres
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/sportgroup-hq/api/internal/models"
 )
 
 func (p *Postgres) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
-	var user *models.User
+	var user models.User
 
 	err := p.db.NewSelect().
-		Model(user).
+		Model(&user).
 		Where("id = ?", id).
 		Scan(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user: %w", err)
+		return nil, p.err(err)
 	}
 
-	return user, nil
+	return &user, nil
+}
+
+func (p *Postgres) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
+	var user models.User
+
+	err := p.db.NewSelect().
+		Model(&user).
+		Where("email = ?", email).
+		Scan(ctx)
+	if err != nil {
+		return nil, p.err(err)
+	}
+
+	return &user, nil
+}
+
+func (p *Postgres) UserExistsByEmail(ctx context.Context, email string) (bool, error) {
+	var exists bool
+
+	err := p.db.NewSelect().
+		Model(&exists).
+		Where("email = ?", email).
+		Scan(ctx)
+	if err != nil {
+		return false, p.err(err)
+	}
+
+	return exists, nil
+}
+
+func (p *Postgres) CreateUser(ctx context.Context, user *models.User) error {
+	if err := p.insert(ctx, user); err != nil {
+		return p.err(err)
+	}
+
+	return nil
 }

@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	config        Config
+	config        *Config
 	isInitialised bool
 	mutex         = new(sync.Mutex)
 )
@@ -17,32 +17,25 @@ var (
 const configFilename = "config.json"
 
 type Config struct {
-	HTTP      HTTP     `json:"http"`
-	GRPC      GRPC     `json:"grpc"`
-	JwtSecret string   `json:"jwt_secret" default:"my-totally-secret-key"`
-	Oauth     Oauth    `json:"oauth"`
-	Postgres  Postgres `json:"postgres"`
-	Redis     Redis    `json:"redis"`
-	Log       Logger   `json:"logger"`
-	AWS       AWS      `json:"aws"`
+	HTTP     HTTP     `json:"http"`
+	GRPC     GRPC     `json:"grpc"`
+	JWT      JWT      `json:"jwt"`
+	Postgres Postgres `json:"postgres"`
+	Redis    Redis    `json:"redis"`
+	Log      Logger   `json:"logger"`
+	AWS      AWS      `json:"aws"`
 }
+
 type HTTP struct {
 	Address string `json:"address" default:":8080"`
 }
 
 type GRPC struct {
-	ApiAddress string `json:"api_address" default:":8081"`
+	ApiAddress string `json:"api_address" default:":8180"`
 }
 
-type Oauth struct {
-	Google Google `json:"google"`
-}
-
-type Google struct {
-	ClientID     string   `json:"client_id"`
-	ClientSecret string   `json:"client_secret"`
-	RedirectURL  string   `json:"redirect_url" default:"http://localhost:8080/api/v1/test"`
-	Scopes       []string `json:"scopes" default:"https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid"`
+type JWT struct {
+	Secret string `json:"secret" default:"my-totally-secret-key"`
 }
 
 type Postgres struct {
@@ -74,7 +67,7 @@ type S3 struct {
 	Bucket string `json:"bucket"`
 }
 
-func New() (Config, error) {
+func New() (*Config, error) {
 	var cfg Config
 
 	filename := configFilename
@@ -86,16 +79,16 @@ func New() (Config, error) {
 	}
 
 	if err := goconfig.Init(&cfg, filename); err != nil {
-		return Config{}, fmt.Errorf("init config: %w", err)
+		return nil, fmt.Errorf("init config: %w", err)
 	}
 
-	config = cfg
+	config = &cfg
 	isInitialised = true
 
-	return cfg, nil
+	return &cfg, nil
 }
 
-func Get() Config {
+func Get() *Config {
 	mutex.Lock()
 	if !isInitialised {
 		cfg, err := New()

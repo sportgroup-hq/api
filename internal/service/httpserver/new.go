@@ -1,17 +1,26 @@
 package httpserver
 
 import (
-	"github.com/sportgroup-hq/api/internal/service"
+	"context"
+
+	"github.com/google/uuid"
+	"github.com/sportgroup-hq/api/internal/config"
+	"github.com/sportgroup-hq/api/internal/models"
 )
 
-type Server struct {
-	auth service.Auth
-	user service.User
+type UserService interface {
+	GetUserByID(ctx context.Context, userID uuid.UUID) (*models.User, error)
+	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
 }
 
-func New(authSrv service.Auth, userSrv service.User) *Server {
+type Server struct {
+	cfg  *config.Config
+	user UserService
+}
+
+func New(cfg *config.Config, userSrv UserService) *Server {
 	return &Server{
-		auth: authSrv,
+		cfg:  cfg,
 		user: userSrv,
 	}
 }
