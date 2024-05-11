@@ -11,10 +11,10 @@ import (
 )
 
 func addOpenAPIDocsRouter(r *gin.Engine) {
-	r.GET("/openapi.yaml", func(ctx *gin.Context) {
+	r.GET("/swagger-docs/openapi.yaml", func(ctx *gin.Context) {
 		ctx.String(http.StatusOK, docs.OpenAPI)
 	})
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/openapi.yaml")))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/swagger-docs/openapi.yaml")))
 	r.GET("/swagger", func(context *gin.Context) {
 		context.Redirect(http.StatusTemporaryRedirect, "/swagger/index.html")
 	})

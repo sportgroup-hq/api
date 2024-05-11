@@ -1,21 +1,102 @@
-openapi: 3.1.0
+openapi: 3.0.3
+
 info:
   title: Sport Groups API
-  description: API documentation for BE diploma project.
-  version: "0.0.1"
+  description: API documentation for BE Sport Group project.
+  version: "0.1.0"
+
 servers:
-  - url: 'https://example.com/api'
+  - url: 'http://localhost:8081'
+    description: "Auth server"
+  - url: 'http://localhost:8080'
+    description: "Api server"
+
 tags:
-  - name: auth
-    description: Auth endpoint
-  - name: group
-    description: Groups endpoint
+  - name: Auth
+    description: Authorization
+  - name: Group
+#    description: Groups endpoints
+  - name: User
+#    description: User endpoints
+
 paths:
+  /auth/oauth2callback:
+    get:
+      summary: Multifunctional endpoint for OAuth2
+      description: Request with no parameters leading to the Google's consent screen. Then, when `code` param is passed, access/refresh tokens will be returned.
+      tags:
+        - Auth
+      parameters:
+        - name: code
+          description: "Code is a OAuth2 Grant Code, that should be passed to that endpoint after redirect from Consent Screen back to App"
+          required: false
+          in: query
+      responses:
+        '303':
+          description: "Redirects to Google OAuth 2 "
+        '200':
+          description: "Returns access and refresh tokens"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OauthToken'
+
+  /auth/login:
+    post:
+      summary: Log in
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '201':
+          description: Successfully created group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OauthToken'
+
+  /auth/register:
+    post:
+      summary: Register user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Successfully created group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OauthToken'
+
+  /me:
+    get:
+      summary: Get current user
+      tags:
+        - User
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
   /groups:
     get:
-      tags:
-        - group
       summary: Get all groups
+      tags:
+        - Group
       responses:
         '200':
           description: An array of groups
@@ -25,6 +106,8 @@ paths:
                 $ref: '#/components/schemas/GroupsResponse'
     post:
       summary: Create a new group
+      tags:
+        - Group
       requestBody:
         required: true
         content:
@@ -38,9 +121,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Group'
+
   /groups/{id}:
     get:
       summary: Get a single group by ID
+      tags:
+        - Group
       parameters:
         - name: id
           in: path
@@ -56,6 +142,8 @@ paths:
                 $ref: '#/components/schemas/Group'
     put:
       summary: Update a group by ID
+      tags:
+        - Group
       parameters:
         - name: id
           in: path
@@ -73,6 +161,8 @@ paths:
           description: Successfully updated group
     delete:
       summary: Delete a group by ID
+      tags:
+        - Group
       parameters:
         - name: id
           in: path
@@ -82,9 +172,12 @@ paths:
       responses:
         '204':
           description: Successfully deleted group
+
   /groups/join:
     post:
       summary: Join a group using a code
+      tags:
+        - Group
       requestBody:
         required: true
         content:
@@ -116,10 +209,12 @@ components:
         editedAt:
           type: string
           format: date-time
+
     GroupsResponse:
       type: array
       items:
         $ref: '#/components/schemas/Group'
+
     GroupRequest:
       type: object
       properties:
@@ -127,11 +222,13 @@ components:
           type: string
         sport:
           type: string
+
     GroupJoinRequest:
       type: object
       properties:
         code:
           type: string
+
     User:
       type: object
       properties:
@@ -157,3 +254,34 @@ components:
       enum:
         - MALE
         - FEMALE
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+
+    OauthToken:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+        refresh_token:
+          type: string
