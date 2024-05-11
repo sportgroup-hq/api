@@ -10,7 +10,7 @@ ENV GOPRIVATE="gitlab.com/sportgroup_hq"
 
 ENV TOKEN=$GITHUB_TOKEN
 
-RUN --mount=type=secret,id=GITHUB_TOKEN,target=/root/gitlab-token.txt \
+RUN --mount=type=secret,id=GIT_AUTH_TOKEN,target=/root/gitlab-token.txt \
     git config --global url."https://$(cat /root/gitlab-token.txt):x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
 RUN go mod download
