@@ -37,7 +37,7 @@ func New(cfg *config.Config, userSrv UserService) *Server {
 }
 
 func (s *Server) Start() error {
-	lis, err := net.Listen("tcp", s.cfg.GRPC.ApiAddress)
+	lis, err := net.Listen("tcp", s.cfg.GRPC.Address)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -46,7 +46,7 @@ func (s *Server) Start() error {
 
 	api.RegisterApiServer(grpcServer, s)
 
-	slog.Info("Starting GRPC server on " + config.Get().GRPC.ApiAddress + "...")
+	slog.Info("Starting GRPC server on " + config.Get().GRPC.Address + "...")
 
 	return grpcServer.Serve(lis)
 }

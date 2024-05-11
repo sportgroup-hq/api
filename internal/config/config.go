@@ -25,44 +25,44 @@ type Config struct {
 }
 
 type HTTP struct {
-	Address string `json:"address" default:":8080"`
+	Address string `json:"address" envconfig:"HTTP_ADDRESS" default:":8080"`
 }
 
 type GRPC struct {
-	ApiAddress string `json:"api_address" default:":8180"`
+	Address string `json:"address" envconfig:"GRPC_ADDRESS" default:":8081"`
 }
 
 type JWT struct {
-	Secret string `json:"secret" default:"my-totally-secret-key"`
+	Secret string `json:"secret" envconfig:"JWT_SECRET" default:"my-totally-secret-key"`
 }
 
 type Postgres struct {
-	Host     string `json:"host" default:"localhost"`
-	Port     int    `json:"port" default:"5432"`
-	Database string `json:"database" default:"oss"`
-	User     string `json:"user" default:"oss"`
-	Password string `json:"password"`
-	Log      bool   `json:"log" default:"true"`
+	Host     string `json:"host"     envconfig:"POSTGRES_HOST"     default:"localhost"`
+	Port     int    `json:"port"     envconfig:"POSTGRES_PORT"     default:"5432"`
+	Database string `json:"database" envconfig:"POSTGRES_DATABASE" default:"sportgroup_api"`
+	User     string `json:"user"     envconfig:"POSTGRES_USER"     default:"sportgroup_api_user"`
+	Password string `json:"password" envconfig:"POSTGRES_PASSWORD"`
+	Log      bool   `json:"log"      envconfig:"POSTGRES_LOG"      default:"true"`
 }
 
 type Redis struct {
-	Address  string `json:"address"`
-	Password string `json:"password"`
+	Address  string `json:"address"  envconfig:"REDIS_ADDRESS"`
+	Password string `json:"password" envconfig:"REDIS_PASSWORD"`
 }
 
 type Logger struct {
-	Level string `json:"level" default:"info"`
+	Level string `json:"level" envconfig:"LOGGER_LEVEL" default:"info"`
 }
 
 type AWS struct {
-	Region          string `json:"region" default:"us-east-1"`
-	AccessKeyID     string `json:"access_key_id"`
-	SecretAccessKey string `json:"access_key_secret"`
+	Region          string `json:"region"            envconfig:"AWS_REGION" default:"us-east-1"`
+	AccessKeyID     string `json:"access_key_id"     envconfig:"AWS_ACCESS_KEY_ID"`
+	SecretAccessKey string `json:"access_key_secret" envconfig:"AWS_SECRET_ACCESS_KEY"`
 	S3              S3     `json:"s3"`
 }
 
 type S3 struct {
-	Bucket string `json:"bucket"`
+	Bucket string `json:"bucket" envconfig:"AWS_S3_BUCKET"`
 }
 
 func New() (*Config, error) {
