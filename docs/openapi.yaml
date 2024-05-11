@@ -15,7 +15,7 @@ tags:
   - name: Auth
     description: Authorization
   - name: Group
-#    description: Groups endpoints
+  #    description: Groups endpoints
   - name: User
 #    description: User endpoints
 
@@ -74,6 +74,25 @@ paths:
       responses:
         '201':
           description: Successfully created group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OauthToken'
+
+  /auth/refresh-token:
+    post:
+      summary: Refresh token
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Successfully refreshed token
           content:
             application/json:
               schema:
@@ -249,13 +268,18 @@ components:
           $ref: '#/components/schemas/Sex'
         address:
           type: string
+
     Sex:
       type: string
       enum:
         - MALE
         - FEMALE
+
     LoginRequest:
       type: object
+      required:
+        - email
+        - password
       properties:
         email:
           type: string
@@ -264,6 +288,11 @@ components:
 
     RegisterRequest:
       type: object
+      required:
+        - email
+        - password
+        - first_name
+        - last_name
       properties:
         email:
           type: string
@@ -272,6 +301,14 @@ components:
         first_name:
           type: string
         last_name:
+          type: string
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
           type: string
 
     OauthToken:

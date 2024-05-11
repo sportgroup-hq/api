@@ -19,12 +19,9 @@ func (s *Server) Start() error {
 
 	addOpenAPIDocsRouter(r)
 
-	r.GET("/", func(ctx *gin.Context) {
-		ctx.Header("Content-Type", "text/html")
-		ctx.String(200, `<html><head></head><body><a href="http://localhost:8081/oauth2callback">login</a></body></html>`)
-	})
+	api := r.Group("/api/v1")
 
-	authorized := r.Use(s.authMiddleware)
+	authorized := api.Use(s.authMiddleware)
 
 	authorized.GET("/me", func(ctx *gin.Context) {
 		value, exists := ctx.Get("userID")
