@@ -14,8 +14,6 @@ var (
 	mutex         = new(sync.Mutex)
 )
 
-const configFilename = "config.json"
-
 type Config struct {
 	HTTP     HTTP     `json:"http"`
 	GRPC     GRPC     `json:"grpc"`
@@ -70,15 +68,9 @@ type S3 struct {
 func New() (*Config, error) {
 	var cfg Config
 
-	filename := configFilename
-
 	flag.Parse()
 
-	if flag.Arg(0) != "" {
-		filename = flag.Arg(0)
-	}
-
-	if err := goconfig.Init(&cfg, filename); err != nil {
+	if err := goconfig.Init(&cfg, flag.Arg(0)); err != nil {
 		return nil, fmt.Errorf("init config: %w", err)
 	}
 
