@@ -21,6 +21,10 @@ func (s *Server) Start() error {
 
 	api := r.Group("/api/v1")
 
+	api.GET("/ping", func(ctx *gin.Context) {
+		ctx.String(200, "api pong")
+	})
+
 	authorized := api.Use(s.authMiddleware)
 
 	authorized.GET("/me", func(ctx *gin.Context) {
