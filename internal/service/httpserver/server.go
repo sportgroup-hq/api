@@ -25,10 +25,6 @@ func (s *Server) Start() error {
 		ctx.String(200, "api pong")
 	})
 
-	api.GET("/ping2", func(ctx *gin.Context) {
-		ctx.String(200, "api pong")
-	})
-
 	authorized := api.Use(s.authMiddleware)
 
 	authorized.GET("/me", func(ctx *gin.Context) {
