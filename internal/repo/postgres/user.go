@@ -36,12 +36,10 @@ func (p *Postgres) GetUserByEmail(ctx context.Context, email string) (*models.Us
 }
 
 func (p *Postgres) UserExistsByEmail(ctx context.Context, email string) (bool, error) {
-	var exists bool
-
-	err := p.db.NewSelect().
-		Model(&exists).
+	exists, err := p.db.NewSelect().
+		Model((*models.User)(nil)).
 		Where("email = ?", email).
-		Scan(ctx)
+		Exists(ctx)
 	if err != nil {
 		return false, p.err(err)
 	}

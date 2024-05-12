@@ -7,7 +7,6 @@ info:
 
 servers:
   - url: 'http://sg.yevhenii.live/api/v1'
-    description: "Api server"
 
 tags:
   - name: Auth
