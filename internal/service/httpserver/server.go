@@ -27,6 +27,7 @@ func (s *Server) Start() error {
 	authorized.GET("/users/me", s.getMeHandler)
 
 	authorized.GET("/groups", s.getGroupsHandler)
+	authorized.POST("/groups", s.createGroupsHandler)
 
 	slog.Info("Starting HTTP server on " + s.cfg.HTTP.Address + "...")
 

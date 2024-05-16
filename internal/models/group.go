@@ -15,19 +15,27 @@ const (
 )
 
 type Group struct {
-	ID        uuid.UUID `json:"id" bun:",pk"`
+	ID        uuid.UUID `json:"id" bun:",pk,nullzero"`
 	Name      string    `json:"name"`
 	Sport     string    `json:"sport"`
 	CreatedAt time.Time `json:"createdAt" bun:",nullzero"`
 	UpdatedAt time.Time `json:"updatedAt" bun:",nullzero"`
 }
 
+type GroupMember struct {
+	ID        uuid.UUID       `json:"id" bun:",pk,nullzero"`
+	GroupID   uuid.UUID       `json:"groupId"`
+	UserID    uuid.UUID       `json:"userId"`
+	Type      GroupMemberType `json:"type"`
+	CreatedAt time.Time       `json:"createdAt" bun:",nullzero"`
+	UpdatedAt time.Time       `json:"updatedAt" bun:",nullzero"`
+}
+
 type GroupInvite struct {
-	ID         uuid.UUID       `json:"id" bun:",pk"`
-	GroupID    uuid.UUID       `json:"groupId"`
-	Code       string          `json:"code"`
-	Active     string          `json:"action"`
-	MemberType GroupMemberType `json:"memberType"`
+	ID      uuid.UUID `json:"id" bun:",pk,nullzero"`
+	GroupID uuid.UUID `json:"groupId"`
+	Code    string    `json:"code"`
+	Active  string    `json:"action"`
 
 	CreatedAt time.Time `json:"createdAt" bun:",nullzero"`
 	UpdatedAt time.Time `json:"updatedAt" bun:",nullzero"`

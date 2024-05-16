@@ -10,7 +10,7 @@ import (
 func (p *Postgres) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	var user models.User
 
-	err := p.db.NewSelect().
+	err := p.tx(ctx).NewSelect().
 		Model(&user).
 		Where("id = ?", id).
 		Scan(ctx)
@@ -24,7 +24,7 @@ func (p *Postgres) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User,
 func (p *Postgres) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
 
-	err := p.db.NewSelect().
+	err := p.tx(ctx).NewSelect().
 		Model(&user).
 		Where("email = ?", email).
 		Scan(ctx)
@@ -36,7 +36,7 @@ func (p *Postgres) GetUserByEmail(ctx context.Context, email string) (*models.Us
 }
 
 func (p *Postgres) UserExistsByEmail(ctx context.Context, email string) (bool, error) {
-	exists, err := p.db.NewSelect().
+	exists, err := p.tx(ctx).NewSelect().
 		Model((*models.User)(nil)).
 		Where("email = ?", email).
 		Exists(ctx)

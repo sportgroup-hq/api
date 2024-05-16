@@ -15,6 +15,7 @@ type UserService interface {
 
 type GroupService interface {
 	GetUserGroups(ctx context.Context, userID uuid.UUID) ([]models.Group, error)
+	CreateGroup(ctx context.Context, creatorID uuid.UUID, group *models.Group) (*models.Group, error)
 }
 
 type Server struct {
