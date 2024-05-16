@@ -13,14 +13,19 @@ type UserService interface {
 	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
 }
 
-type Server struct {
-	cfg  *config.Config
-	user UserService
+type GroupService interface {
 }
 
-func New(cfg *config.Config, userSrv UserService) *Server {
+type Server struct {
+	cfg      *config.Config
+	userSrv  UserService
+	groupSrv GroupService
+}
+
+func New(cfg *config.Config, userSrv UserService, groupSrv GroupService) *Server {
 	return &Server{
-		cfg:  cfg,
-		user: userSrv,
+		cfg:      cfg,
+		userSrv:  userSrv,
+		groupSrv: groupSrv,
 	}
 }

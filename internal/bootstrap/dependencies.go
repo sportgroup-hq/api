@@ -5,6 +5,7 @@ import (
 	"github.com/sportgroup-hq/api/internal/repo/postgres"
 	"github.com/sportgroup-hq/api/internal/service/grpcserver"
 	"github.com/sportgroup-hq/api/internal/service/httpserver"
+	"github.com/sportgroup-hq/api/internal/service/user"
 )
 
 type Dependencies struct {
@@ -12,6 +13,8 @@ type Dependencies struct {
 
 	HTTPServer *httpserver.Server
 	GRPCServer *grpcserver.Server
+
+	UserService *user.Service
 
 	postgres *postgres.Postgres
 }

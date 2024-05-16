@@ -9,6 +9,7 @@ package bootstrap
 import (
 	"github.com/sportgroup-hq/api/internal/config"
 	"github.com/sportgroup-hq/api/internal/repo/postgres"
+	"github.com/sportgroup-hq/api/internal/service/group"
 	"github.com/sportgroup-hq/api/internal/service/grpcserver"
 	"github.com/sportgroup-hq/api/internal/service/httpserver"
 	"github.com/sportgroup-hq/api/internal/service/user"
@@ -24,7 +25,8 @@ func Up() (*Dependencies, error) {
 	configPostgres := getPostgresConfig(configConfig)
 	postgresPostgres := postgres.New(configPostgres)
 	service := user.New(postgresPostgres)
-	server := httpserver.New(configConfig, service)
+	groupService := group.New(configConfig, postgresPostgres)
+	server := httpserver.New(configConfig, service, groupService)
 	grpcserverServer := grpcserver.New(configConfig, service)
 	dependencies := NewDependencies(configConfig, server, grpcserverServer, postgresPostgres)
 	return dependencies, nil

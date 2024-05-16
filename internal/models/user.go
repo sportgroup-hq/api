@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/sportgroup-hq/common-lib/api"
 )
@@ -13,11 +15,15 @@ const (
 )
 
 type User struct {
-	ID        uuid.UUID `json:"id" bun:",pk,nullzero"`
-	FirstName string    `json:"firstName"`
-	LastName  string    `json:"lastName"`
-	Email     string    `json:"email"`
-	Picture   string    `json:"picture"`
+	ID          uuid.UUID  `json:"id" bun:",pk,nullzero"`
+	FirstName   string     `json:"firstName"`
+	LastName    string     `json:"lastName"`
+	Email       string     `json:"email"`
+	PictureURL  string     `json:"pictureURL" bun:",nullzero"`
+	Phone       string     `json:"phone" bun:",nullzero"`
+	DateOfBirth *time.Time `json:"dateOfBirth,omitempty" bun:",nullzero"`
+	CreatedAt   time.Time  `json:"createdAt" bun:",nullzero"`
+	UpdatedAt   time.Time  `json:"updatedAt"  bun:",nullzero"`
 	//Role      Role      `json:"role" bun:",nullzero"`
 }
 

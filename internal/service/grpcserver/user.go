@@ -63,7 +63,7 @@ func (s *Server) CreateUser(ctx context.Context, req *api.CreateUserRequest) (*a
 	}
 
 	if req.Picture != nil {
-		user.Picture = *req.Picture
+		user.PictureURL = *req.Picture
 	}
 
 	user, err := s.userSrv.CreateUser(ctx, user)

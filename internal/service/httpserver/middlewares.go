@@ -53,7 +53,7 @@ func (s *Server) authMiddleware(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Set("userID", userID)
+	ctx.Set(userIDKey, userID)
 
 	ctx.Next()
 }
