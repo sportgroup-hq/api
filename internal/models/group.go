@@ -35,7 +35,7 @@ type GroupInvite struct {
 	ID      uuid.UUID `json:"id" bun:",pk,nullzero"`
 	GroupID uuid.UUID `json:"groupId"`
 	Code    string    `json:"code"`
-	Active  string    `json:"action"`
+	Active  bool      `json:"action"`
 
 	CreatedAt time.Time `json:"createdAt" bun:",nullzero"`
 	UpdatedAt time.Time `json:"updatedAt" bun:",nullzero"`

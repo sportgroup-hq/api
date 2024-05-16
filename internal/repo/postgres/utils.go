@@ -19,9 +19,10 @@ func (p *Postgres) tx(ctx context.Context) bun.IDB {
 }
 
 func (p *Postgres) err(err error) error {
-	if errors.Is(err, sql.ErrNoRows) {
-		return models.NotFoundError
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		return models.ErrNotFound
+	default:
+		return err
 	}
-
-	return err
 }

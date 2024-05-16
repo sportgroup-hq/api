@@ -14,6 +14,10 @@ type CreateGroupRequest struct {
 	Sport string `json:"sport" binding:"required"`
 }
 
+type JoinGroupRequest struct {
+	Code string `json:"code" binding:"required,len=6"`
+}
+
 func (s *Server) getGroupsHandler(ctx *gin.Context) {
 	groups, err := s.groupSrv.GetUserGroups(ctx, ctx.MustGet(userIDKey).(uuid.UUID))
 	if err != nil {
@@ -41,6 +45,57 @@ func (s *Server) createGroupsHandler(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, group)
+}
+
+func (s *Server) joinGroupHandler(ctx *gin.Context) {
+	var jgr JoinGroupRequest
+
+	if err := ctx.MustBindWith(&jgr, binding.JSON); err != nil {
+		return
+	}
+
+	userID := ctx.MustGet(userIDKey).(uuid.UUID)
+
+	if err := s.groupSrv.JoinGroup(ctx, userID, jgr.Code); err != nil {
+		s.error(ctx, err)
+		return
+	}
+
+	ctx.AbortWithStatus(http.StatusOK)
+}
+
+func (s *Server) deleteGroupHandler(ctx *gin.Context) {
+	groupID, err := uuid.Parse(ctx.Param("group_id"))
+	if err != nil {
+		s.error(ctx, models.ErrPathMalformed)
+		return
+	}
+
+	userID := ctx.MustGet(userIDKey).(uuid.UUID)
+
+	if err = s.groupSrv.DeleteGroup(ctx, userID, groupID); err != nil {
+		s.error(ctx, err)
+		return
+	}
+
+	ctx.AbortWithStatus(http.StatusOK)
+}
+
+func (s *Server) leaveGroupHandler(ctx *gin.Context) {
+	groupID, err := uuid.Parse(ctx.Param("group_id"))
+	if err != nil {
+		s.error(ctx, models.ErrPathMalformed)
+		return
+	}
+
+	userID := ctx.MustGet(userIDKey).(uuid.UUID)
+
+	if err = s.groupSrv.LeaveGroup(ctx, userID, groupID); err != nil {
+		s.error(ctx, err)
+		return
+	}
+
+	ctx.AbortWithStatus(http.StatusOK)
 }
 
 func (r CreateGroupRequest) toGroup() *models.Group {

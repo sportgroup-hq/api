@@ -10,11 +10,16 @@ import (
 )
 
 func (s *Server) error(ctx *gin.Context, err error) {
-	switch {
-	case errors.Is(err, models.NotFoundError):
-		ctx.AbortWithStatus(http.StatusNotFound)
-	default:
+	internalErr := models.Error(err)
+
+	if errors.Is(internalErr, models.ErrUnknown) {
 		slog.ErrorContext(ctx, err.Error())
 		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
+
+	ctx.AbortWithStatusJSON(internalErr.HTTPStatusCode, gin.H{
+		"error": internalErr.Error(),
+		"code":  internalErr.InternalCode,
+	})
 }
