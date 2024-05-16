@@ -7,12 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *Server) getMeHandler(c *gin.Context) {
-	user, err := s.userSrv.GetUserByID(c, c.MustGet(userIDKey).(uuid.UUID))
+func (s *Server) getMeHandler(ctx *gin.Context) {
+	user, err := s.userSrv.GetUserByID(ctx, ctx.MustGet(userIDKey).(uuid.UUID))
 	if err != nil {
-		s.error(c, err)
+		s.error(ctx, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, user)
 }

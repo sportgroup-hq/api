@@ -14,6 +14,7 @@ type UserService interface {
 }
 
 type GroupService interface {
+	GetUserGroups(ctx context.Context, userID uuid.UUID) ([]models.Group, error)
 }
 
 type Server struct {

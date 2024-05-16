@@ -6,21 +6,28 @@ import (
 	"github.com/google/uuid"
 )
 
+type GroupMemberType string
+
+const (
+	GroupMemberTypeStudent GroupMemberType = "student"
+	GroupMemberTypeAdmin   GroupMemberType = "admin"
+	GroupMemberTypeOwner   GroupMemberType = "owner"
+)
+
 type Group struct {
 	ID        uuid.UUID `json:"id" bun:",pk"`
 	Name      string    `json:"name"`
 	Sport     string    `json:"sport"`
-	OwnerID   uuid.UUID `json:"ownerId"`
-	Owner     *User     `json:"owner" bun:"rel:belongs-to"`
 	CreatedAt time.Time `json:"createdAt" bun:",nullzero"`
 	UpdatedAt time.Time `json:"updatedAt" bun:",nullzero"`
 }
 
 type GroupInvite struct {
-	ID      uuid.UUID `json:"id" bun:",pk"`
-	GroupID uuid.UUID `json:"groupId"`
-	Code    string    `json:"code"`
-	Active  string    `json:"action"`
+	ID         uuid.UUID       `json:"id" bun:",pk"`
+	GroupID    uuid.UUID       `json:"groupId"`
+	Code       string          `json:"code"`
+	Active     string          `json:"action"`
+	MemberType GroupMemberType `json:"memberType"`
 
 	CreatedAt time.Time `json:"createdAt" bun:",nullzero"`
 	UpdatedAt time.Time `json:"updatedAt" bun:",nullzero"`

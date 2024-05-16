@@ -1,8 +1,15 @@
 package group
 
-import "github.com/sportgroup-hq/api/internal/config"
+import (
+	"context"
+
+	"github.com/google/uuid"
+	"github.com/sportgroup-hq/api/internal/config"
+	"github.com/sportgroup-hq/api/internal/models"
+)
 
 type Repo interface {
+	GetOwnerOrJoinedGroupsByUserID(ctx context.Context, userID uuid.UUID) ([]models.Group, error)
 }
 
 type Service struct {

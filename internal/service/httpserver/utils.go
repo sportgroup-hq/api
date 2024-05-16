@@ -9,12 +9,12 @@ import (
 	"github.com/sportgroup-hq/api/internal/models"
 )
 
-func (s *Server) error(c *gin.Context, err error) {
+func (s *Server) error(ctx *gin.Context, err error) {
 	switch {
 	case errors.Is(err, models.NotFoundError):
-		c.AbortWithStatus(http.StatusNotFound)
+		ctx.AbortWithStatus(http.StatusNotFound)
 	default:
-		slog.ErrorContext(c, err.Error())
-		c.AbortWithStatus(http.StatusInternalServerError)
+		slog.ErrorContext(ctx, err.Error())
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 	}
 }

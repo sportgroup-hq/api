@@ -25,7 +25,8 @@ func (s *Server) Start() error {
 	authorized := api.Use(s.authMiddleware)
 
 	authorized.GET("/users/me", s.getMeHandler)
-	//authorized.GET("/users/:id", s.getUserByIDHandler)
+
+	authorized.GET("/groups", s.getGroupsHandler)
 
 	slog.Info("Starting HTTP server on " + s.cfg.HTTP.Address + "...")
 
