@@ -2,6 +2,7 @@ package grpcserver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -32,11 +33,11 @@ func (s *Server) GetUserByEmail(ctx context.Context, req *api.GetUserByEmailRequ
 
 	user, err := s.userSrv.GetUserByEmail(ctx, req.Email)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user: %w", err)
-	}
+		if errors.Is(err, models.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, "user not found")
+		}
 
-	if user == nil {
-		return nil, status.New(codes.NotFound, "user not found").Err()
+		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 
 	return &api.GetUserByEmailResponse{User: models.UserToPB(user)}, nil
