@@ -32,7 +32,6 @@ CREATE TABLE groups
     id         uuid PRIMARY KEY default uuid_generate_v4(),
     name       VARCHAR(255)                               NOT NULL,
     sport      VARCHAR(255)                               NOT NULL,
-    owner_id   uuid                                       REFERENCES users (id) ON DELETE SET NULL,
     created_at TIMESTAMP        DEFAULT current_timestamp NOT NULL,
     updated_at TIMESTAMP        DEFAULT current_timestamp NOT NULL
 );

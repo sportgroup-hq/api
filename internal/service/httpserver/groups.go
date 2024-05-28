@@ -28,7 +28,7 @@ func (s *Server) getGroupsHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, groups)
 }
 
-func (s *Server) createGroupsHandler(ctx *gin.Context) {
+func (s *Server) createGroupHandler(ctx *gin.Context) {
 	var cgr CreateGroupRequest
 
 	if err := ctx.MustBindWith(&cgr, binding.JSON); err != nil {
@@ -39,6 +39,32 @@ func (s *Server) createGroupsHandler(ctx *gin.Context) {
 	newGroup := cgr.toGroup()
 
 	group, err := s.groupSrv.CreateGroup(ctx, creatorID, newGroup)
+	if err != nil {
+		s.error(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, group)
+}
+
+func (s *Server) updateGroupHandler(ctx *gin.Context) {
+	var updateGroupRequest models.UpdateGroupRequest
+
+	if err := ctx.MustBindWith(&updateGroupRequest, binding.JSON); err != nil {
+		return
+	}
+
+	userID := ctx.MustGet(userIDKey).(uuid.UUID)
+
+	groupID, err := uuid.Parse(ctx.Param("group_id"))
+	if err != nil {
+		s.error(ctx, models.ErrPathMalformed)
+		return
+	}
+
+	updateGroupRequest.ID = groupID
+
+	group, err := s.groupSrv.UpdateGroup(ctx, userID, updateGroupRequest)
 	if err != nil {
 		s.error(ctx, err)
 		return

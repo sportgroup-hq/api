@@ -1,6 +1,8 @@
 package postgres
 
+type ctxKey string
+
 const (
-	txKey         = "tx_key"
-	txCommitedKey = "tx_commited_key"
+	txKey         ctxKey = "tx_key"
+	txCommitedKey ctxKey = "tx_commited_key"
 )

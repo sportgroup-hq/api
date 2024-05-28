@@ -40,3 +40,25 @@ type GroupInvite struct {
 	CreatedAt time.Time `json:"createdAt" bun:",nullzero"`
 	UpdatedAt time.Time `json:"updatedAt" bun:",nullzero"`
 }
+
+type UpdateGroupRequest struct {
+	ID    uuid.UUID `json:"id"`
+	Name  *string   `json:"name"`
+	Sport *string   `json:"sport"`
+}
+
+func (m GroupMember) CanEditGroup() bool {
+	return m.Type == GroupMemberTypeOwner || m.Type == GroupMemberTypeAdmin
+}
+
+func (r UpdateGroupRequest) Apply(group *Group) *Group {
+	if r.Name != nil {
+		group.Name = *r.Name
+	}
+
+	if r.Sport != nil {
+		group.Sport = *r.Sport
+	}
+
+	return group
+}

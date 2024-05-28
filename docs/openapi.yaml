@@ -171,7 +171,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Group'
+              $ref: '#/components/schemas/UpdateGroupRequest'
       responses:
         '200':
           description: Successfully updated group
@@ -243,6 +243,14 @@ components:
       type: object
       properties:
         code:
+          type: string
+
+    UpdateGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        sport:
           type: string
 
     User:

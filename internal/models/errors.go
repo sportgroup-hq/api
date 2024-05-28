@@ -16,6 +16,7 @@ var (
 	ErrNotFound      = err(1001, "not found", http.StatusNotFound)
 	ErrDuplicate     = err(1002, "duplicate", http.StatusConflict)
 	ErrPathMalformed = err(1003, "path malformed", http.StatusBadRequest)
+	ErrForbidden     = err(1004, "forbidden", http.StatusForbidden)
 
 	ErrGroupInviteInactive = err(2001, "group invite is inactive", http.StatusForbidden)
 	ErrAlreadyJoined       = err(2002, "already joined", http.StatusConflict)

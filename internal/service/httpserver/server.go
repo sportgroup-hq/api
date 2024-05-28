@@ -32,9 +32,10 @@ func (s *Server) Start() error {
 
 	// Groups
 	authorized.GET("/groups", s.getGroupsHandler)
-	authorized.POST("/groups", s.createGroupsHandler)
+	authorized.POST("/groups", s.createGroupHandler)
 	authorized.POST("/groups/join", s.joinGroupHandler)
 	authorized.DELETE("/groups/:group_id", s.deleteGroupHandler)
+	authorized.PUT("/groups/:group_id", s.updateGroupHandler)
 	authorized.POST("/groups/:group_id/leave", s.leaveGroupHandler)
 
 	slog.Info("Starting HTTP server on " + s.cfg.HTTP.Address + "...")
