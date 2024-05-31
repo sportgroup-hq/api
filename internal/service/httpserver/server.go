@@ -29,6 +29,7 @@ func (s *Server) Start() error {
 
 	// Users
 	authorized.GET("/users/me", s.getMeHandler)
+	authorized.PUT("/users/me", s.updateMeHandler)
 
 	// Groups
 	authorized.GET("/groups", s.getGroupsHandler)

@@ -1,0 +1,8 @@
+BEGIN;
+
+ALTER TABLE users
+    ADD COLUMN sex VARCHAR(255);
+ALTER TABLE users
+    ADD COLUMN address VARCHAR(255);
+
+COMMIT;

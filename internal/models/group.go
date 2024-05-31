@@ -42,7 +42,7 @@ type GroupInvite struct {
 }
 
 type UpdateGroupRequest struct {
-	ID    uuid.UUID `json:"id"`
+	ID    uuid.UUID `json:"-"`
 	Name  *string   `json:"name"`
 	Sport *string   `json:"sport"`
 }

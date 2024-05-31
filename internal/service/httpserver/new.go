@@ -11,6 +11,7 @@ import (
 type UserService interface {
 	GetUserByID(ctx context.Context, userID uuid.UUID) (*models.User, error)
 	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
+	UpdateUser(c context.Context, updateUserRequest models.UpdateUserRequest) (*models.User, error)
 }
 
 type GroupService interface {

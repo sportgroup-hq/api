@@ -107,6 +107,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+    put:
+      summary: Update current user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Successfully updated user
 
   /groups:
     get:
@@ -252,6 +265,21 @@ components:
           type: string
         sport:
           type: string
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        avatarUrl:
+          type: string
+        phone:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
 
     User:
       type: object

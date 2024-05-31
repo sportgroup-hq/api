@@ -39,30 +39,6 @@ func (s *Service) CreateGroup(ctx context.Context, creatorID uuid.UUID, group *m
 	return group, nil
 }
 
-func (s *Service) UpdateGroup(ctx context.Context, userID uuid.UUID, updateGroupRequest models.UpdateGroupRequest) (*models.Group, error) {
-	groupMember, err := s.repo.GetGroupMember(ctx, userID, updateGroupRequest.ID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get group member: %w", err)
-	}
-
-	if groupMember.CanEditGroup() {
-		return nil, models.ErrForbidden
-	}
-
-	group, err := s.repo.GetGroup(ctx, updateGroupRequest.ID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get group: %w", err)
-	}
-
-	newGroup := updateGroupRequest.Apply(group)
-
-	if err = s.repo.UpdateGroup(ctx, newGroup); err != nil {
-		return nil, fmt.Errorf("failed to create group: %w", err)
-	}
-
-	return group, nil
-}
-
 func (s *Service) JoinGroup(ctx context.Context, userID uuid.UUID, code string) error {
 	groupInvite, err := s.repo.GetGroupInviteByCode(ctx, code)
 	if err != nil {
@@ -92,38 +68,4 @@ func (s *Service) JoinGroup(ctx context.Context, userID uuid.UUID, code string) 
 	}
 
 	return nil
-}
-
-func (s *Service) LeaveGroup(ctx context.Context, userID, groupID uuid.UUID) error {
-	groupMember, err := s.repo.GetGroupMember(ctx, userID, groupID)
-	if err != nil {
-		if errors.Is(err, models.ErrNotFound) {
-			return models.ErrNotJoined
-		}
-
-		return fmt.Errorf("failed to check if group member exists: %w", err)
-	}
-
-	if groupMember.Type == models.GroupMemberTypeOwner {
-		return models.ErrOwnerCannotLeave
-	}
-
-	if err = s.repo.DeleteGroupMember(ctx, userID, groupID); err != nil {
-		return fmt.Errorf("failed to delete group member: %w", err)
-	}
-
-	return nil
-}
-
-func (s *Service) DeleteGroup(ctx context.Context, initiatorID uuid.UUID, groupID uuid.UUID) error {
-	groupMember, err := s.repo.GetGroupMember(ctx, initiatorID, groupID)
-	if err != nil {
-		return fmt.Errorf("failed to get group member: %w", err)
-	}
-
-	if groupMember.Type != models.GroupMemberTypeOwner {
-		return models.ErrNotOwner
-	}
-
-	return s.repo.DeleteGroup(ctx, groupID)
 }

@@ -16,7 +16,6 @@ import (
 type UserService interface {
 	GetUserByID(ctx context.Context, userID uuid.UUID) (*models.User, error)
 	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
-	UserExistsByID(ctx context.Context, userID uuid.UUID) (bool, error)
 	UserExistsByEmail(ctx context.Context, email string) (bool, error)
 	CreateUser(ctx context.Context, user *models.User) (*models.User, error)
 }

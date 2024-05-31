@@ -12,6 +12,7 @@ type Repo interface {
 	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
 	UserExistsByEmail(ctx context.Context, email string) (bool, error)
 	CreateUser(ctx context.Context, user *models.User) error
+	UpdateUser(ctx context.Context, request *models.User) error
 }
 
 type Service struct {

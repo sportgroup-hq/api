@@ -54,3 +54,7 @@ func (p *Postgres) CreateUser(ctx context.Context, user *models.User) error {
 
 	return nil
 }
+
+func (p *Postgres) UpdateUser(ctx context.Context, user *models.User) error {
+	return p.updateByPK(ctx, user)
+}
