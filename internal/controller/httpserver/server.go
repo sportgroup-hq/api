@@ -61,6 +61,9 @@ func (s *Server) Start() error {
 
 	authorized.POST("/groups/:group_id/events/:event_id/records/:record_id", s.setRecordValueHandler) // ANSWER TO RECORD
 
+	authorized.GET("/groups/:group_id/events/:event_id/comments", s.getEventCommentsHandler)
+	authorized.POST("/groups/:group_id/events/:event_id/comments", s.createEventCommentHandler)
+
 	slog.Info("Starting HTTP server on " + s.cfg.HTTP.Address + "...")
 
 	return r.Run(s.cfg.HTTP.Address)

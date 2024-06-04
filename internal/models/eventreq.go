@@ -7,11 +7,11 @@ import (
 )
 
 type CreateEventRequest struct {
-	Title       string    `json:"title" binding:"required"`
-	Description string    `json:"description"`
-	Location    string    `json:"location"`
-	StartAt     time.Time `json:"startAt" binding:"required"`
-	EndAt       time.Time `json:"endAt" binding:"required"`
+	Title       string    `json:"title" binding:"required,min=1,max=255"`
+	Description string    `json:"description" binding:"omitempty,max=1000"`
+	Location    string    `json:"location" binding:"omitempty,max=255"`
+	StartAt     time.Time `json:"startAt" binding:"required,ltefield=EndAt"`
+	EndAt       time.Time `json:"endAt" binding:"required,gtefield=StartAt"`
 
 	AssignType      AssignType  `json:"assignType" binding:"required,oneof=all selected"`
 	AssignedUserIDs []uuid.UUID `json:"assignedUserIDs" binding:"required_if=AssignType selected,dive,uuid4"`
@@ -20,7 +20,7 @@ type CreateEventRequest struct {
 }
 
 type CreateRecordRequest struct {
-	Title             string       `json:"title" binding:"required"`
+	Title             string       `json:"title" binding:"required,min=1,max=255"`
 	Type              RecordType   `json:"type" binding:"required,oneof=checkbox rating text number photo video file"`
 	ReadAccessScopes  AccessScopes `json:"readAccessScopes" binding:"required,dive,oneof=coach student"`
 	WriteAccessScopes AccessScopes `json:"writeAccessScopes" binding:"required,dive,oneof=coach student"`

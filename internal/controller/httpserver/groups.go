@@ -8,15 +8,6 @@ import (
 	"github.com/sportgroup-hq/api/internal/models"
 )
 
-type CreateGroupRequest struct {
-	Name  string `json:"name" binding:"required"`
-	Sport string `json:"sport" binding:"required"`
-}
-
-type JoinGroupRequest struct {
-	Code string `json:"code" binding:"required,len=6"`
-}
-
 func (s *Server) getGroupsHandler(ctx *gin.Context) {
 	groups, err := s.groupSrv.GetGroupsByUser(ctx, ctx.MustGet(userIDKey).(uuid.UUID))
 	if err != nil {
@@ -46,7 +37,7 @@ func (s *Server) getGroupByIDHandler(ctx *gin.Context) {
 }
 
 func (s *Server) createGroupHandler(ctx *gin.Context) {
-	var cgr CreateGroupRequest
+	var cgr models.CreateGroupRequest
 
 	if err := ctx.ShouldBind(&cgr); err != nil {
 		s.error(ctx, err)
@@ -54,9 +45,8 @@ func (s *Server) createGroupHandler(ctx *gin.Context) {
 	}
 
 	creatorID := ctx.MustGet(userIDKey).(uuid.UUID)
-	newGroup := cgr.toGroup()
 
-	group, err := s.groupSrv.CreateGroup(ctx, creatorID, newGroup)
+	group, err := s.groupSrv.CreateGroup(ctx, creatorID, cgr)
 	if err != nil {
 		s.error(ctx, err)
 		return
@@ -93,7 +83,7 @@ func (s *Server) updateGroupHandler(ctx *gin.Context) {
 }
 
 func (s *Server) joinGroupHandler(ctx *gin.Context) {
-	var jgr JoinGroupRequest
+	var jgr models.JoinGroupRequest
 
 	if err := ctx.ShouldBind(&jgr); err != nil {
 		s.error(ctx, err)
@@ -178,11 +168,4 @@ func (s *Server) getGroupRecordsHandler(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, records)
-}
-
-func (r CreateGroupRequest) toGroup() *models.Group {
-	return &models.Group{
-		Name:  r.Name,
-		Sport: r.Sport,
-	}
 }

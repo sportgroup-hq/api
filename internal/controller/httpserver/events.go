@@ -76,34 +76,34 @@ func (s *Server) getEventHandler(ctx *gin.Context) {
 }
 
 func (s *Server) updateEventHandler(ctx *gin.Context) {
-	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
-	if err != nil {
-		s.error(ctx, models.ErrPathMalformed)
-		return
-	}
-
-	eventID, err := uuid.Parse(ctx.Param(EventIDParam))
-	if err != nil {
-		s.error(ctx, models.ErrPathMalformed)
-		return
-	}
-
-	userID := ctx.MustGet(userIDKey).(uuid.UUID)
-
-	var updateEvent models.UpdateEventRequest
-
-	if err = ctx.ShouldBind(&updateEvent); err != nil {
-		s.error(ctx, err)
-		return
-	}
-
-	updatedEvent, err := s.eventSrv.UpdateEvent(ctx, userID, groupID, eventID, &updateEvent)
-	if err != nil {
-		s.error(ctx, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, updatedEvent)
+	//groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
+	//if err != nil {
+	//	s.error(ctx, models.ErrPathMalformed)
+	//	return
+	//}
+	//
+	//eventID, err := uuid.Parse(ctx.Param(EventIDParam))
+	//if err != nil {
+	//	s.error(ctx, models.ErrPathMalformed)
+	//	return
+	//}
+	//
+	//userID := ctx.MustGet(userIDKey).(uuid.UUID)
+	//
+	//var updateEvent models.UpdateEventRequest
+	//
+	//if err = ctx.ShouldBind(&updateEvent); err != nil {
+	//	s.error(ctx, err)
+	//	return
+	//}
+	//
+	//updatedEvent, err := s.eventSrv.UpdateEvent(ctx, userID, groupID, eventID, &updateEvent)
+	//if err != nil {
+	//	s.error(ctx, err)
+	//	return
+	//}
+	//
+	//ctx.JSON(http.StatusOK, updatedEvent)
 }
 
 func (s *Server) deleteEventHandler(ctx *gin.Context) {
@@ -167,4 +167,58 @@ func (s *Server) setRecordValueHandler(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusNoContent)
+}
+
+func (s *Server) createEventCommentHandler(ctx *gin.Context) {
+	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
+	if err != nil {
+		s.error(ctx, models.ErrPathMalformed)
+		return
+	}
+
+	eventID, err := uuid.Parse(ctx.Param(EventIDParam))
+	if err != nil {
+		s.error(ctx, models.ErrPathMalformed)
+		return
+	}
+
+	userID := ctx.MustGet(userIDKey).(uuid.UUID)
+
+	var comment models.CreateCommentRequest
+
+	if err = ctx.ShouldBind(&comment); err != nil {
+		s.error(ctx, err)
+		return
+	}
+
+	if err = s.eventSrv.CreateEventComment(ctx, userID, groupID, eventID, &comment); err != nil {
+		s.error(ctx, err)
+		return
+	}
+
+	ctx.AbortWithStatus(http.StatusCreated)
+}
+
+func (s *Server) getEventCommentsHandler(ctx *gin.Context) {
+	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
+	if err != nil {
+		s.error(ctx, models.ErrPathMalformed)
+		return
+	}
+
+	eventID, err := uuid.Parse(ctx.Param(EventIDParam))
+	if err != nil {
+		s.error(ctx, models.ErrPathMalformed)
+		return
+	}
+
+	userID := ctx.MustGet(userIDKey).(uuid.UUID)
+
+	comments, err := s.eventSrv.GetEventComments(ctx, userID, groupID, eventID)
+	if err != nil {
+		s.error(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, comments)
 }

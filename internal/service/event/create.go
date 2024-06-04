@@ -66,9 +66,9 @@ func (s *Service) CreateEvent(ctx context.Context, userID, groupID uuid.UUID, ce
 	return event, nil
 }
 
-func (s *Service) UpdateEvent(ctx context.Context, userID, groupID, eventID uuid.UUID, uer *models.UpdateEventRequest) (*models.Event, error) {
-	return nil, nil
-}
+//func (s *Service) UpdateEvent(ctx context.Context, userID, groupID, eventID uuid.UUID, uer *models.UpdateEventRequest) (*models.Event, error) {
+//	return nil, nil
+//}
 
 func (s *Service) DeleteEvent(ctx context.Context, userID, groupID, eventID uuid.UUID) error {
 	groupMember, err := s.groupRepo.GetGroupMember(ctx, userID, groupID)
@@ -122,4 +122,58 @@ func (s *Service) SetEventRecordValue(ctx context.Context, userID, groupID, even
 	}
 
 	return nil
+}
+
+func (s *Service) CreateEventComment(ctx context.Context, userID, groupID, eventID uuid.UUID, ccr *models.CreateCommentRequest) error {
+	exists, err := s.groupRepo.GroupMemberExists(ctx, userID, groupID)
+	if err != nil {
+		return fmt.Errorf("failed to get group member: %w", err)
+	}
+
+	if !exists {
+		return models.ErrNotFound
+	}
+
+	exists, err = s.repo.EventWithGroupIDExists(ctx, groupID, eventID)
+	if err != nil {
+		return fmt.Errorf("failed to get event: %w", err)
+	}
+
+	if !exists {
+		return models.ErrNotFound
+	}
+
+	comment := &models.EventComment{
+		EventID: eventID,
+		UserID:  userID,
+		Text:    ccr.Text,
+	}
+
+	if err = s.repo.CreateEventComment(ctx, comment); err != nil {
+		return fmt.Errorf("failed to create event comment: %w", err)
+	}
+
+	return nil
+}
+
+func (s *Service) GetEventComments(ctx context.Context, userID, groupID, eventID uuid.UUID) ([]models.EventComment, error) {
+	exists, err := s.groupRepo.GroupMemberExists(ctx, userID, groupID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get group member: %w", err)
+	}
+
+	if !exists {
+		return nil, models.ErrNotFound
+	}
+
+	exists, err = s.repo.EventWithGroupIDExists(ctx, groupID, eventID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get event: %w", err)
+	}
+
+	if !exists {
+		return nil, models.ErrNotFound
+	}
+
+	return s.repo.GetEventComments(ctx, eventID)
 }

@@ -24,8 +24,8 @@ type User struct {
 	DateOfBirth *time.Time `json:"dateOfBirth" bun:",nullzero"`
 	Sex         string     `json:"sex" bun:",nullzero"`
 	Address     string     `json:"address" bun:",nullzero"`
-	CreatedAt   time.Time  `json:"createdAt" bun:",nullzero"`
-	UpdatedAt   time.Time  `json:"updatedAt"  bun:",nullzero"`
+	CreatedAt   time.Time  `json:"-" bun:",nullzero"`
+	UpdatedAt   time.Time  `json:"-"  bun:",nullzero"`
 	//Role      Role      `json:"role" bun:",nullzero"`
 }
 

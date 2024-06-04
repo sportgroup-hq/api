@@ -16,8 +16,8 @@ type Repo interface {
 	CreateEventAssignees(ctx context.Context, assignees []models.EventAssignee) error
 
 	GetEventsByGroup(ctx context.Context, groupID uuid.UUID, opts ...repo.Option) (models.Events, error)
-	GetEventByID(ctx context.Context, eventID uuid.UUID) (*models.Event, error)
 	GetEventByIDAndGroupID(ctx context.Context, eventID, groupID uuid.UUID) (*models.Event, error)
+	EventWithGroupIDExists(ctx context.Context, groupID, eventID uuid.UUID) (bool, error)
 
 	DeleteEvent(ctx context.Context, eventID uuid.UUID) error
 
@@ -25,11 +25,15 @@ type Repo interface {
 
 	GetEventValueByGroupIDAndEventID(ctx context.Context, groupID uuid.UUID, eventID ...uuid.UUID) ([]models.EventRecordValue, error)
 
+	CreateEventComment(ctx context.Context, comment *models.EventComment) error
+	GetEventComments(ctx context.Context, eventID uuid.UUID) ([]models.EventComment, error)
+
 	OrRecordAssignTypeAllOrSelected(userID uuid.UUID) repo.Option
 }
 
 type GroupRepo interface {
 	GetGroupMember(ctx context.Context, userID, groupID uuid.UUID) (*models.GroupMember, error)
+	GroupMemberExists(ctx context.Context, userID, groupID uuid.UUID) (bool, error)
 }
 
 type Service struct {

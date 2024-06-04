@@ -33,21 +33,6 @@ func (p *Postgres) GetEventsByGroup(ctx context.Context, groupID uuid.UUID, opts
 	return events, nil
 }
 
-func (p *Postgres) GetEventByID(ctx context.Context, eventID uuid.UUID) (*models.Event, error) {
-	event := new(models.Event)
-
-	err := p.tx().NewSelect().
-		Model(event).
-		Where("id = ?", eventID).
-		Relation("AssignedUsers").
-		Scan(ctx)
-	if err != nil {
-		return nil, p.err(err)
-	}
-
-	return event, nil
-}
-
 func (p *Postgres) GetEventByIDAndGroupID(ctx context.Context, eventID, groupID uuid.UUID) (*models.Event, error) {
 	event := new(models.Event)
 
@@ -56,12 +41,26 @@ func (p *Postgres) GetEventByIDAndGroupID(ctx context.Context, eventID, groupID 
 		Where("id = ?", eventID).
 		Where("group_id = ?", groupID).
 		Relation("AssignedUsers").
+		Relation("Comments.User").
 		Scan(ctx)
 	if err != nil {
 		return nil, p.err(err)
 	}
 
 	return event, nil
+}
+
+func (p *Postgres) EventWithGroupIDExists(ctx context.Context, groupID, eventID uuid.UUID) (bool, error) {
+	exists, err := p.tx().NewSelect().
+		Model((*models.Event)(nil)).
+		Where("id = ?", eventID).
+		Where("group_id = ?", groupID).
+		Exists(ctx)
+	if err != nil {
+		return false, p.err(err)
+	}
+
+	return exists, nil
 }
 
 func (p *Postgres) DeleteEvent(ctx context.Context, eventID uuid.UUID) error {
@@ -86,6 +85,25 @@ func (p *Postgres) GetEventValueByGroupIDAndEventID(ctx context.Context, groupID
 	}
 
 	return values, nil
+}
+
+func (p *Postgres) CreateEventComment(ctx context.Context, comment *models.EventComment) error {
+	return p.insert(ctx, comment)
+}
+
+func (p *Postgres) GetEventComments(ctx context.Context, eventID uuid.UUID) ([]models.EventComment, error) {
+	var comments []models.EventComment
+
+	err := p.tx().NewSelect().
+		Model(&comments).
+		Where("event_id = ?", eventID).
+		Relation("User").
+		Scan(ctx)
+	if err != nil {
+		return nil, p.err(err)
+	}
+
+	return comments, nil
 }
 
 func (p *Postgres) OrRecordAssignTypeAllOrSelected(userID uuid.UUID) repo.Option {

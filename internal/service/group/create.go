@@ -10,7 +10,9 @@ import (
 	"github.com/sportgroup-hq/api/internal/repo"
 )
 
-func (s *Service) CreateGroup(ctx context.Context, creatorID uuid.UUID, group *models.Group) (*models.Group, error) {
+func (s *Service) CreateGroup(ctx context.Context, creatorID uuid.UUID, cgr models.CreateGroupRequest) (*models.Group, error) {
+	var group = cgr.ToGroup()
+
 	err := s.repo.Atomic(ctx, func(atomicRepo repo.Atomic) error {
 		r := atomicRepo.(Repo)
 

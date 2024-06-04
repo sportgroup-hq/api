@@ -40,10 +40,19 @@ type GroupInvite struct {
 	UpdatedAt time.Time `json:"updatedAt" bun:",nullzero"`
 }
 
+type JoinGroupRequest struct {
+	Code string `json:"code" binding:"required,len=6"`
+}
+
+type CreateGroupRequest struct {
+	Name  string `json:"name" binding:"required,min=1,max=255"`
+	Sport string `json:"sport" binding:"required,min=1,max=255"`
+}
+
 type UpdateGroupRequest struct {
 	ID    uuid.UUID `json:"-"`
-	Name  *string   `json:"name"`
-	Sport *string   `json:"sport"`
+	Name  *string   `json:"name" binding:"omitempty,min=1,max=255"`
+	Sport *string   `json:"sport" binding:"omitempty,min=1,max=255"`
 }
 
 func (m GroupMember) CanEditGroup() bool {
@@ -64,6 +73,13 @@ func (m GroupMember) CanCreateEvent() bool {
 
 func (m GroupMember) CanAccessGroupRecords() bool {
 	return m.Type == GroupMemberTypeCoach
+}
+
+func (r CreateGroupRequest) ToGroup() *Group {
+	return &Group{
+		Name:  r.Name,
+		Sport: r.Sport,
+	}
 }
 
 func (r UpdateGroupRequest) Apply(group *Group) *Group {

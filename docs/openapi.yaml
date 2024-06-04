@@ -457,6 +457,64 @@ paths:
                 items:
                   $ref: '#/components/schemas/Record'
 
+  /groups/{group_id}/events/{event_id}/comments:
+    get:
+      summary: Get event comments
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: An array of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventComment'
+    post:
+      summary: Create a new comment
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommentRequest'
+      responses:
+        '201':
+          description: Successfully created comment
+
 components:
   securitySchemes:
     bearerAuth:
@@ -532,11 +590,13 @@ components:
         id:
           type: string
           format: uuid
+        email:
+          type: string
         firstName:
           type: string
         lastName:
           type: string
-        avatarUrl:
+        pictureURL:
           type: string
         phone:
           type: string
@@ -685,6 +745,26 @@ components:
 
     RecordValue:
       type: object
+
+    EventComment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user:
+          $ref: '#/components/schemas/User'
+        text:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateCommentRequest:
+      type: object
+      properties:
+        text:
+          type: string
 
     LoginRequest:
       type: object

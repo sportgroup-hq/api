@@ -43,6 +43,9 @@ type Event struct {
 	//AssignedUserIDs []uuid.UUID `json:"assignedUserIDs" bun:"assigned_user_ids"`
 	AssignedUsers []User `json:"assigned_users" bun:"m2m:event_assignees,join:Event=User"`
 
+	// one to many
+	Comments []EventComment `json:"comments" bun:"rel:has-many,join:id=event_id"`
+
 	CreatedAt time.Time `json:"createdAt" bun:",nullzero"`
 	UpdatedAt time.Time `json:"-" bun:",nullzero"`
 }
