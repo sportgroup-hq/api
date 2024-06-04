@@ -7,33 +7,38 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sportgroup-hq/api/internal/models"
+	"github.com/sportgroup-hq/api/internal/repo"
 )
 
 func (s *Service) CreateGroup(ctx context.Context, creatorID uuid.UUID, group *models.Group) (*models.Group, error) {
-	ctx, err := s.repo.BeginTx(ctx)
+	err := s.repo.Atomic(ctx, func(atomicRepo repo.Atomic) error {
+		r := atomicRepo.(Repo)
+
+		newGroup, err := r.CreateGroup(ctx, group)
+		if err != nil {
+			return fmt.Errorf("failed to create group: %w", err)
+		}
+
+		if _, err = r.CreateGroupInvite(ctx, newGroup.ID, randGroupCode()); err != nil {
+			return fmt.Errorf("failed to create group invite: %w", err)
+		}
+
+		// add coach to group
+		_, err = r.CreateGroupMember(ctx, newGroup.ID, creatorID, models.GroupMemberTypeCoach)
+		if err != nil {
+			return fmt.Errorf("failed to add coach to group: %w", err)
+		}
+
+		if err = r.CopyDefaultGroupRecords(ctx, newGroup.ID); err != nil {
+			return fmt.Errorf("failed to copy default group records: %w", err)
+		}
+
+		group = newGroup
+
+		return nil
+	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer s.repo.RollbackTx(ctx)
-
-	// create group
-	group, err = s.repo.CreateGroup(ctx, group)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create group: %w", err)
-	}
-
-	// add owner to group
-	_, err = s.repo.CreateGroupMember(ctx, group.ID, creatorID, models.GroupMemberTypeOwner)
-	if err != nil {
-		return nil, fmt.Errorf("failed to add owner to group: %w", err)
-	}
-
-	if _, err = s.repo.CreateGroupInvite(ctx, group.ID, randGroupCode()); err != nil {
-		return nil, fmt.Errorf("failed to create group invite: %w", err)
-	}
-
-	if err = s.repo.CommitTx(ctx); err != nil {
-		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+		return nil, err
 	}
 
 	return group, nil

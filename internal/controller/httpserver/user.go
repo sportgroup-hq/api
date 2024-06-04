@@ -18,21 +18,21 @@ func (s *Server) getMeHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
-func (s *Server) updateMeHandler(c *gin.Context) {
+func (s *Server) updateMeHandler(ctx *gin.Context) {
 	var uur models.UpdateUserRequest
 
-	if err := c.ShouldBindJSON(&uur); err != nil {
-		s.error(c, err)
+	if err := ctx.ShouldBindJSON(&uur); err != nil {
+		s.error(ctx, err)
 		return
 	}
 
-	uur.ID = c.MustGet(userIDKey).(uuid.UUID)
+	uur.ID = ctx.MustGet(userIDKey).(uuid.UUID)
 
-	user, err := s.userSrv.UpdateUser(c, uur)
+	user, err := s.userSrv.UpdateUser(ctx, uur)
 	if err != nil {
-		s.error(c, err)
+		s.error(ctx, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, user)
 }

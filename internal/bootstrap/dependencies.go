@@ -2,9 +2,9 @@ package bootstrap
 
 import (
 	"github.com/sportgroup-hq/api/internal/config"
+	"github.com/sportgroup-hq/api/internal/controller/grpcserver"
+	"github.com/sportgroup-hq/api/internal/controller/httpserver"
 	"github.com/sportgroup-hq/api/internal/repo/postgres"
-	"github.com/sportgroup-hq/api/internal/service/grpcserver"
-	"github.com/sportgroup-hq/api/internal/service/httpserver"
 	"github.com/sportgroup-hq/api/internal/service/user"
 )
 

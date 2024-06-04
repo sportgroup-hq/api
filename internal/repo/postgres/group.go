@@ -31,7 +31,7 @@ func (p *Postgres) CreateGroupInvite(ctx context.Context, groupID uuid.UUID, cod
 func (p *Postgres) GetGroup(ctx context.Context, groupID uuid.UUID) (*models.Group, error) {
 	group := new(models.Group)
 
-	err := p.tx(ctx).NewSelect().
+	err := p.tx().NewSelect().
 		Model(group).
 		Where("id = ?", groupID).
 		Scan(ctx)
@@ -42,10 +42,10 @@ func (p *Postgres) GetGroup(ctx context.Context, groupID uuid.UUID) (*models.Gro
 	return group, nil
 }
 
-func (p *Postgres) GetOwnerOrJoinedGroupsByUserID(ctx context.Context, userID uuid.UUID) ([]models.Group, error) {
+func (p *Postgres) GetGroupsJoinedByUserID(ctx context.Context, userID uuid.UUID) ([]models.Group, error) {
 	var groups []models.Group
 
-	err := p.tx(ctx).NewSelect().
+	err := p.tx().NewSelect().
 		Model(&groups).
 		Join(`INNER JOIN group_members gm ON gm.group_id = "group".id`).
 		Where("gm.user_id = ?", userID).
@@ -60,7 +60,7 @@ func (p *Postgres) GetOwnerOrJoinedGroupsByUserID(ctx context.Context, userID uu
 func (p *Postgres) GetGroupInviteByCode(ctx context.Context, code string) (*models.GroupInvite, error) {
 	var groupInvite models.GroupInvite
 
-	err := p.tx(ctx).NewSelect().
+	err := p.tx().NewSelect().
 		Model(&groupInvite).
 		Where("code = ?", code).
 		Scan(ctx)
@@ -76,21 +76,18 @@ func (p *Postgres) UpdateGroup(ctx context.Context, group *models.Group) error {
 }
 
 func (p *Postgres) DeleteGroup(ctx context.Context, groupID uuid.UUID) error {
-	_, err := p.tx(ctx).NewDelete().
+	_, err := p.tx().NewDelete().
 		Model((*models.Group)(nil)).
 		Where("id = ?", groupID).
 		Exec(ctx)
-	if err != nil {
-		return p.err(err)
-	}
 
-	return nil
+	return p.err(err)
 }
 
 func (p *Postgres) GetGroupMember(ctx context.Context, userID, groupID uuid.UUID) (*models.GroupMember, error) {
 	var groupMember models.GroupMember
 
-	err := p.tx(ctx).NewSelect().
+	err := p.tx().NewSelect().
 		Model(&groupMember).
 		Where("user_id = ? AND group_id = ?", userID, groupID).
 		Scan(ctx)
@@ -102,7 +99,7 @@ func (p *Postgres) GetGroupMember(ctx context.Context, userID, groupID uuid.UUID
 }
 
 func (p *Postgres) GroupMemberExists(ctx context.Context, userID, groupID uuid.UUID) (bool, error) {
-	exists, err := p.tx(ctx).NewSelect().
+	exists, err := p.tx().NewSelect().
 		Model((*models.GroupMember)(nil)).
 		Where("user_id = ? AND group_id = ?", userID, groupID).
 		Exists(ctx)
@@ -128,13 +125,10 @@ func (p *Postgres) CreateGroupMember(ctx context.Context, groupID, userID uuid.U
 }
 
 func (p *Postgres) DeleteGroupMember(ctx context.Context, userID, groupID uuid.UUID) error {
-	_, err := p.tx(ctx).NewDelete().
+	_, err := p.tx().NewDelete().
 		Model((*models.GroupMember)(nil)).
 		Where("user_id = ? AND group_id = ?", userID, groupID).
 		Exec(ctx)
-	if err != nil {
-		return p.err(err)
-	}
 
-	return nil
+	return p.err(err)
 }

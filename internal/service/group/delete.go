@@ -19,8 +19,8 @@ func (s *Service) LeaveGroup(ctx context.Context, userID, groupID uuid.UUID) err
 		return fmt.Errorf("failed to check if group member exists: %w", err)
 	}
 
-	if groupMember.Type == models.GroupMemberTypeOwner {
-		return models.ErrOwnerCannotLeave
+	if groupMember.Type == models.GroupMemberTypeCoach {
+		return models.ErrCoachCannotLeave
 	}
 
 	if err = s.repo.DeleteGroupMember(ctx, userID, groupID); err != nil {
@@ -36,8 +36,8 @@ func (s *Service) DeleteGroup(ctx context.Context, initiatorID uuid.UUID, groupI
 		return fmt.Errorf("failed to get group member: %w", err)
 	}
 
-	if groupMember.Type != models.GroupMemberTypeOwner {
-		return models.ErrNotOwner
+	if !groupMember.CanDeleteGroup() {
+		return models.ErrForbidden
 	}
 
 	return s.repo.DeleteGroup(ctx, groupID)

@@ -10,7 +10,7 @@ import (
 type Role string
 
 const (
-// RoleTeacher Role = "teacher"
+// RoleTeacher Role = "coach"
 // RoleStudent Role = "student"
 )
 
@@ -21,7 +21,7 @@ type User struct {
 	Email       string     `json:"email"`
 	PictureURL  string     `json:"pictureURL" bun:",nullzero"`
 	Phone       string     `json:"phone" bun:",nullzero"`
-	DateOfBirth *time.Time `json:"dateOfBirth,omitempty" bun:",nullzero"`
+	DateOfBirth *time.Time `json:"dateOfBirth" bun:",nullzero"`
 	Sex         string     `json:"sex" bun:",nullzero"`
 	Address     string     `json:"address" bun:",nullzero"`
 	CreatedAt   time.Time  `json:"createdAt" bun:",nullzero"`

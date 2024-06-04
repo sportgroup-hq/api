@@ -10,7 +10,7 @@ import (
 func (p *Postgres) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	var user models.User
 
-	err := p.tx(ctx).NewSelect().
+	err := p.tx().NewSelect().
 		Model(&user).
 		Where("id = ?", id).
 		Scan(ctx)
@@ -24,7 +24,7 @@ func (p *Postgres) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User,
 func (p *Postgres) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
 
-	err := p.tx(ctx).NewSelect().
+	err := p.tx().NewSelect().
 		Model(&user).
 		Where("email = ?", email).
 		Scan(ctx)
@@ -36,7 +36,7 @@ func (p *Postgres) GetUserByEmail(ctx context.Context, email string) (*models.Us
 }
 
 func (p *Postgres) UserExistsByEmail(ctx context.Context, email string) (bool, error) {
-	exists, err := p.tx(ctx).NewSelect().
+	exists, err := p.tx().NewSelect().
 		Model((*models.User)(nil)).
 		Where("email = ?", email).
 		Exists(ctx)
@@ -47,12 +47,23 @@ func (p *Postgres) UserExistsByEmail(ctx context.Context, email string) (bool, e
 	return exists, nil
 }
 
-func (p *Postgres) CreateUser(ctx context.Context, user *models.User) error {
-	if err := p.insert(ctx, user); err != nil {
-		return p.err(err)
+func (p *Postgres) GetUserByGroupMembership(ctx context.Context, groupID uuid.UUID) ([]models.User, error) {
+	var users []models.User
+
+	err := p.tx().NewSelect().
+		Model(&users).
+		Join(`INNER JOIN group_members ON group_members.user_id = "user".id`).
+		Where("group_members.group_id = ?", groupID).
+		Scan(ctx)
+	if err != nil {
+		return nil, p.err(err)
 	}
 
-	return nil
+	return users, nil
+}
+
+func (p *Postgres) CreateUser(ctx context.Context, user *models.User) error {
+	return p.insert(ctx, user)
 }
 
 func (p *Postgres) UpdateUser(ctx context.Context, user *models.User) error {

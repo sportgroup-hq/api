@@ -7,6 +7,7 @@ info:
 
 servers:
   - url: 'http://sg.yevhenii.live/api/v1'
+  - url: 'http://localhost/api/v1'
 
 tags:
   - name: Auth
@@ -15,6 +16,9 @@ tags:
   #    description: Groups endpoints
   - name: User
 #    description: User endpoints
+
+security:
+  - bearerAuth: [ ]
 
 paths:
   /auth/oauth2callback:
@@ -100,6 +104,8 @@ paths:
       summary: Get current user
       tags:
         - User
+      security:
+        - bearerAuth: [ ]
       responses:
         '200':
           description: Current user
@@ -107,10 +113,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-    put:
+    patch:
       summary: Update current user
       tags:
         - User
+      security:
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -126,6 +134,8 @@ paths:
       summary: Get all groups
       tags:
         - Group
+      security:
+        - bearerAuth: [ ]
       responses:
         '200':
           description: An array of groups
@@ -137,6 +147,8 @@ paths:
       summary: Create a new group
       tags:
         - Group
+      security:
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -151,17 +163,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/Group'
 
-  /groups/{id}:
+  /groups/{group_id}:
     get:
       summary: Get a single group by ID
       tags:
         - Group
+      security:
+        - bearerAuth: [ ]
       parameters:
-        - name: id
+        - name: group_id
           in: path
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: A single group
@@ -169,16 +184,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Group'
-    put:
+    patch:
       summary: Update a group by ID
       tags:
         - Group
+      security:
+        - bearerAuth: [ ]
       parameters:
-        - name: id
+        - name: group_id
           in: path
           required: true
           schema:
             type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -192,21 +210,50 @@ paths:
       summary: Delete a group by ID
       tags:
         - Group
+      security:
+        - bearerAuth: [ ]
       parameters:
-        - name: id
+        - name: group_id
           in: path
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '204':
           description: Successfully deleted group
+
+  /groups/{group_id}/members:
+    get:
+      summary: Get all members of a group
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: An array of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
 
   /groups/join:
     post:
       summary: Join a group using a code
       tags:
         - Group
+      security:
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -217,21 +264,219 @@ paths:
         '200':
           description: Successfully joined group
 
+  /groups/{group_id}/events:
+    get:
+      summary: Get group events for the user
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: An array of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+    post:
+      summary: Create a new event
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+      responses:
+        '201':
+          description: Successfully created event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+
+  /groups/{group_id}/events/{event_id}:
+    get:
+      summary: Get a single event by ID
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A single event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    patch:
+      summary: Update an event by ID
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+      responses:
+        '200':
+          description: Successfully updated event
+    delete:
+      summary: Delete an event by ID
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Successfully deleted event
+
+  /groups/{group_id}/records:
+    get:
+      summary: Get group records for the user
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: An array of records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupRecord'
+
+  /groups/{group_id}/events/{event_id}/records/{record_id}:
+    post:
+      summary: Answer event's record
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: record_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordValue'
+      responses:
+        '200':
+          description: An array of records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Record'
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     Group:
       type: object
       properties:
         id:
           type: string
+          format: uuid
         name:
           type: string
         sport:
           type: string
         code:
           type: string
-        owner:
-          $ref: '#/components/schemas/User'
         createdAt:
           type: string
           format: date-time
@@ -286,6 +531,7 @@ components:
       properties:
         id:
           type: string
+          format: uuid
         firstName:
           type: string
         lastName:
@@ -308,6 +554,138 @@ components:
         - MALE
         - FEMALE
 
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        groupId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        startAt:
+          type: string
+          format: date-time
+        endAT:
+          type: string
+          format: date-time
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/Record'
+
+    Record:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        type:
+          $ref: '#/components/schemas/RecordType'
+        readAccessScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessScope'
+        writeAccessScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessScope'
+        value:
+          type: object
+
+    GroupRecord:
+      type: object
+      properties:
+        title:
+          type: string
+        type:
+          $ref: '#/components/schemas/RecordType'
+        readAccessScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessScope'
+        writeAccessScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessScope'
+
+    CreateEventRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        startAt:
+          type: string
+          format: date-time
+        endAT:
+          type: string
+          format: date-time
+        assignType:
+          $ref: '#/components/schemas/AssignType'
+        assignedUserIDs:
+          type: array
+          items:
+            type: string
+            format: uuid
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateRecordRequest'
+
+    CreateRecordRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        type:
+          $ref: '#/components/schemas/RecordType'
+        readAccessScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessScope'
+        writeAccessScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessScope'
+
+    AssignType:
+      type: string
+      enum:
+        - all
+        - selected
+
+    AccessScope:
+      type: string
+      enum:
+        - coach
+        - student
+
+    RecordType:
+      type: string
+      enum:
+        - checkbox
+        - rating
+        - text
+        - number
+        - photo
+        - video
+        - file
+
+    RecordValue:
+      type: object
+
     LoginRequest:
       type: object
       required:
@@ -324,34 +702,34 @@ components:
       required:
         - email
         - password
-        - first_name
-        - last_name
+        - firstName
+        - lastName
       properties:
         email:
           type: string
         password:
           type: string
-        first_name:
+        firstName:
           type: string
-        last_name:
+        lastName:
           type: string
 
     RefreshTokenRequest:
       type: object
       required:
-        - refresh_token
+        - refreshToken
       properties:
-        refresh_token:
+        refreshToken:
           type: string
 
     OauthToken:
       type: object
       properties:
-        access_token:
+        accessToken:
           type: string
-        token_type:
+        tokenType:
           type: string
-        expires_in:
+        expiry:
           type: integer
-        refresh_token:
+        refreshToken:
           type: string

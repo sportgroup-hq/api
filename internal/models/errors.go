@@ -18,11 +18,13 @@ var (
 	ErrPathMalformed = err(1003, "path malformed", http.StatusBadRequest)
 	ErrForbidden     = err(1004, "forbidden", http.StatusForbidden)
 
-	ErrGroupInviteInactive = err(2001, "group invite is inactive", http.StatusForbidden)
-	ErrAlreadyJoined       = err(2002, "already joined", http.StatusConflict)
-	ErrNotJoined           = err(2003, "not joined", http.StatusForbidden)
-	ErrOwnerCannotLeave    = err(2004, "owner cannot leave", http.StatusForbidden)
-	ErrNotOwner            = err(2005, "not owner", http.StatusForbidden)
+	ErrGroupInviteInactive  = err(2001, "group invite is inactive", http.StatusForbidden)
+	ErrAlreadyJoined        = err(2002, "already joined", http.StatusConflict)
+	ErrNotJoined            = err(2003, "not joined", http.StatusForbidden)
+	ErrCoachCannotLeave     = err(2004, "coach cannot leave", http.StatusForbidden)
+	ErrAssigneesRequired    = err(2005, "assignees required", http.StatusBadRequest)
+	ErrRecordTitleNotUnique = err(2006, "record title not unique", http.StatusBadRequest)
+	ErrRecordNotFound       = err(2007, "record not found", http.StatusNotFound)
 )
 
 func err(internalCode int, text string, httpCode int) InternalError {

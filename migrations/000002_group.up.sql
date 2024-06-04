@@ -46,7 +46,7 @@ CREATE TABLE group_invites
     updated_at TIMESTAMP        DEFAULT current_timestamp NOT NULL
 );
 
-CREATE TYPE group_member_type AS ENUM ('student', 'admin', 'owner');
+CREATE TYPE group_member_type AS ENUM ('student', 'coach');
 
 CREATE TABLE group_members
 (

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/sportgroup-hq/api/internal/config"
+	"github.com/sportgroup-hq/api/internal/models"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
@@ -12,7 +13,8 @@ import (
 )
 
 type Postgres struct {
-	db *bun.DB
+	db          *bun.DB
+	transaction *bun.Tx
 }
 
 func New(cfg config.Postgres) *Postgres {
@@ -25,7 +27,21 @@ func New(cfg config.Postgres) *Postgres {
 		db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 	}
 
+	db.RegisterModel((*models.EventAssignee)(nil))
+
 	return &Postgres{
 		db: db,
+	}
+}
+
+func (p *Postgres) clone() *Postgres {
+	return &Postgres{
+		db: p.db,
+	}
+}
+
+func (p *Postgres) withTx(tx bun.Tx) *Postgres {
+	return &Postgres{
+		transaction: &tx,
 	}
 }

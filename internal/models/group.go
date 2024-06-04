@@ -10,8 +10,7 @@ type GroupMemberType string
 
 const (
 	GroupMemberTypeStudent GroupMemberType = "student"
-	GroupMemberTypeAdmin   GroupMemberType = "admin"
-	GroupMemberTypeOwner   GroupMemberType = "owner"
+	GroupMemberTypeCoach   GroupMemberType = "coach"
 )
 
 type Group struct {
@@ -48,7 +47,23 @@ type UpdateGroupRequest struct {
 }
 
 func (m GroupMember) CanEditGroup() bool {
-	return m.Type == GroupMemberTypeOwner || m.Type == GroupMemberTypeAdmin
+	return m.Type == GroupMemberTypeCoach
+}
+
+func (m GroupMember) CanDeleteGroup() bool {
+	return m.Type == GroupMemberTypeCoach
+}
+
+func (m GroupMember) CanDeleteEvent() bool {
+	return m.Type == GroupMemberTypeCoach
+}
+
+func (m GroupMember) CanCreateEvent() bool {
+	return m.Type == GroupMemberTypeCoach
+}
+
+func (m GroupMember) CanAccessGroupRecords() bool {
+	return m.Type == GroupMemberTypeCoach
 }
 
 func (r UpdateGroupRequest) Apply(group *Group) *Group {
