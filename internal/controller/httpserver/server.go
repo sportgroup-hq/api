@@ -12,6 +12,14 @@ import (
 	"github.com/sportgroup-hq/common-lib/validation"
 )
 
+// todo todo todo
+// аплоад медіа
+// GET /analytics/records?name=Присутність%20на%20тренуванні&group_id=1&start_at=2021-09-01&end_at=2021-09-30
+// екпорт в csv по, наприклад, присутності
+// чати
+// push-notifications
+// Емейл підтвердження
+
 func (s *Server) Start() error {
 	r := gin.Default()
 
@@ -38,31 +46,31 @@ func (s *Server) Start() error {
 	authorized := api.Use(s.authMiddleware)
 
 	// Users
-	authorized.GET("/users/me", s.getMeHandler)
-	authorized.PATCH("/users/me", s.updateMeHandler)
+	authorized.GET("/users/me", s.getMe)
+	authorized.PATCH("/users/me", s.updateMe)
 
 	// Groups
-	authorized.GET("/groups", s.getGroupsHandler)
-	authorized.GET("/groups/:group_id", s.getGroupByIDHandler)
-	authorized.POST("/groups", s.createGroupHandler)
-	authorized.POST("/groups/join", s.joinGroupHandler)
-	authorized.DELETE("/groups/:group_id", s.deleteGroupHandler)
-	authorized.PATCH("/groups/:group_id", s.updateGroupHandler)
-	authorized.POST("/groups/:group_id/leave", s.leaveGroupHandler)
-	authorized.GET("/groups/:group_id/records", s.getGroupRecordsHandler)
+	authorized.GET("/groups", s.getGroups)
+	authorized.GET("/groups/:group_id", s.getGroupByID)
+	authorized.POST("/groups", s.createGroup)
+	authorized.POST("/groups/join", s.joinGroup)
+	authorized.DELETE("/groups/:group_id", s.deleteGroup)
+	authorized.PATCH("/groups/:group_id", s.updateGroup)
+	authorized.POST("/groups/:group_id/leave", s.leaveGroup)
+	authorized.GET("/groups/:group_id/records", s.getGroupRecords)
 
-	authorized.GET("/groups/:group_id/members", s.getGroupMembersHandler)
+	authorized.GET("/groups/:group_id/members", s.getGroupMembers)
 
-	authorized.GET("/groups/:group_id/events", s.getEventsHandler)
-	authorized.POST("/groups/:group_id/events", s.createEventHandler)
-	authorized.GET("/groups/:group_id/events/:event_id", s.getEventHandler)
-	//authorized.PATCH("/groups/:group_id/events/:event_id", s.updateEventHandler)
-	authorized.DELETE("/groups/:group_id/events/:event_id", s.deleteEventHandler)
+	authorized.GET("/groups/:group_id/events", s.getEvents)
+	authorized.POST("/groups/:group_id/events", s.createEvent)
+	authorized.GET("/groups/:group_id/events/:event_id", s.getEvent)
+	//authorized.PATCH("/groups/:group_id/events/:event_id", s.updateEvent)
+	authorized.DELETE("/groups/:group_id/events/:event_id", s.deleteEvent)
 
-	authorized.POST("/groups/:group_id/events/:event_id/records/:record_id", s.setRecordValueHandler) // ANSWER TO RECORD
+	authorized.POST("/groups/:group_id/events/:event_id/records/:record_id", s.setRecordValue)
 
-	authorized.GET("/groups/:group_id/events/:event_id/comments", s.getEventCommentsHandler)
-	authorized.POST("/groups/:group_id/events/:event_id/comments", s.createEventCommentHandler)
+	authorized.GET("/groups/:group_id/events/:event_id/comments", s.getEventComments)
+	authorized.POST("/groups/:group_id/events/:event_id/comments", s.createEventComment)
 
 	slog.Info("Starting HTTP server on " + s.cfg.HTTP.Address + "...")
 

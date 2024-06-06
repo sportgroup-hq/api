@@ -8,7 +8,7 @@ import (
 	"github.com/sportgroup-hq/api/internal/models"
 )
 
-func (s *Server) getGroupsHandler(ctx *gin.Context) {
+func (s *Server) getGroups(ctx *gin.Context) {
 	groups, err := s.groupSrv.GetGroupsByUser(ctx, ctx.MustGet(userIDKey).(uuid.UUID))
 	if err != nil {
 		s.error(ctx, err)
@@ -18,7 +18,7 @@ func (s *Server) getGroupsHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, groups)
 }
 
-func (s *Server) getGroupByIDHandler(ctx *gin.Context) {
+func (s *Server) getGroupByID(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -36,7 +36,7 @@ func (s *Server) getGroupByIDHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, group)
 }
 
-func (s *Server) createGroupHandler(ctx *gin.Context) {
+func (s *Server) createGroup(ctx *gin.Context) {
 	var cgr models.CreateGroupRequest
 
 	if err := ctx.ShouldBind(&cgr); err != nil {
@@ -55,7 +55,7 @@ func (s *Server) createGroupHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, group)
 }
 
-func (s *Server) updateGroupHandler(ctx *gin.Context) {
+func (s *Server) updateGroup(ctx *gin.Context) {
 	var updateGroupRequest models.UpdateGroupRequest
 
 	if err := ctx.ShouldBind(&updateGroupRequest); err != nil {
@@ -82,7 +82,7 @@ func (s *Server) updateGroupHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, group)
 }
 
-func (s *Server) joinGroupHandler(ctx *gin.Context) {
+func (s *Server) joinGroup(ctx *gin.Context) {
 	var jgr models.JoinGroupRequest
 
 	if err := ctx.ShouldBind(&jgr); err != nil {
@@ -100,7 +100,7 @@ func (s *Server) joinGroupHandler(ctx *gin.Context) {
 	ctx.AbortWithStatus(http.StatusOK)
 }
 
-func (s *Server) deleteGroupHandler(ctx *gin.Context) {
+func (s *Server) deleteGroup(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -117,7 +117,7 @@ func (s *Server) deleteGroupHandler(ctx *gin.Context) {
 	ctx.AbortWithStatus(http.StatusOK)
 }
 
-func (s *Server) leaveGroupHandler(ctx *gin.Context) {
+func (s *Server) leaveGroup(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -134,7 +134,7 @@ func (s *Server) leaveGroupHandler(ctx *gin.Context) {
 	ctx.AbortWithStatus(http.StatusOK)
 }
 
-func (s *Server) getGroupMembersHandler(ctx *gin.Context) {
+func (s *Server) getGroupMembers(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -152,7 +152,7 @@ func (s *Server) getGroupMembersHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, members)
 }
 
-func (s *Server) getGroupRecordsHandler(ctx *gin.Context) {
+func (s *Server) getGroupRecords(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)

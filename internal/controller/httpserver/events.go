@@ -8,7 +8,7 @@ import (
 	"github.com/sportgroup-hq/api/internal/models"
 )
 
-func (s *Server) createEventHandler(ctx *gin.Context) {
+func (s *Server) createEvent(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -33,7 +33,7 @@ func (s *Server) createEventHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, createdEvent)
 }
 
-func (s *Server) getEventsHandler(ctx *gin.Context) {
+func (s *Server) getEvents(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -51,7 +51,7 @@ func (s *Server) getEventsHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, events)
 }
 
-func (s *Server) getEventHandler(ctx *gin.Context) {
+func (s *Server) getEvent(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -106,7 +106,7 @@ func (s *Server) updateEventHandler(ctx *gin.Context) {
 	//ctx.JSON(http.StatusOK, updatedEvent)
 }
 
-func (s *Server) deleteEventHandler(ctx *gin.Context) {
+func (s *Server) deleteEvent(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -130,7 +130,7 @@ func (s *Server) deleteEventHandler(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-func (s *Server) setRecordValueHandler(ctx *gin.Context) {
+func (s *Server) setRecordValue(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -169,7 +169,7 @@ func (s *Server) setRecordValueHandler(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-func (s *Server) createEventCommentHandler(ctx *gin.Context) {
+func (s *Server) createEventComment(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)
@@ -199,7 +199,7 @@ func (s *Server) createEventCommentHandler(ctx *gin.Context) {
 	ctx.AbortWithStatus(http.StatusCreated)
 }
 
-func (s *Server) getEventCommentsHandler(ctx *gin.Context) {
+func (s *Server) getEventComments(ctx *gin.Context) {
 	groupID, err := uuid.Parse(ctx.Param(GroupIDParam))
 	if err != nil {
 		s.error(ctx, models.ErrPathMalformed)

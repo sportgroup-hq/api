@@ -8,7 +8,7 @@ import (
 	"github.com/sportgroup-hq/api/internal/models"
 )
 
-func (s *Server) getMeHandler(ctx *gin.Context) {
+func (s *Server) getMe(ctx *gin.Context) {
 	user, err := s.userSrv.GetUserByID(ctx, ctx.MustGet(userIDKey).(uuid.UUID))
 	if err != nil {
 		s.error(ctx, err)
@@ -18,7 +18,7 @@ func (s *Server) getMeHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
-func (s *Server) updateMeHandler(ctx *gin.Context) {
+func (s *Server) updateMe(ctx *gin.Context) {
 	var uur models.UpdateUserRequest
 
 	if err := ctx.ShouldBindJSON(&uur); err != nil {
