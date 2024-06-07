@@ -264,6 +264,24 @@ paths:
         '200':
           description: Successfully joined group
 
+  /groups/{group_id}/leave:
+    post:
+      summary: Leave a group
+      tags:
+        - Group
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully left group
+
   /groups/{group_id}/events:
     get:
       summary: Get group events for the user
