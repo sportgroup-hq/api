@@ -10,7 +10,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type Claims struct {
+	jwt.RegisteredClaims
+	Subject uuid.UUID `json:"sub"`
+	Type    string    `json:"typ"`
+}
+
 func (s *Server) authMiddleware(ctx *gin.Context) {
+	var claims Claims
+
 	authHeader := ctx.GetHeader("Authorization")
 
 	parts := strings.Split(authHeader, " ")
@@ -22,9 +30,7 @@ func (s *Server) authMiddleware(ctx *gin.Context) {
 
 	token := parts[1]
 
-	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(s.cfg.JWT.Secret), nil
-	})
+	parsedToken, err := jwt.ParseWithClaims(token, &claims, s.jwtSecretFunc)
 	if err != nil || !parsedToken.Valid {
 		if errors.Is(err, jwt.ErrTokenExpired) {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token expired"})
@@ -34,26 +40,16 @@ func (s *Server) authMiddleware(ctx *gin.Context) {
 		return
 	}
 
-	claims := parsedToken.Claims.(jwt.MapClaims)
-
-	if claims["typ"] != "access" {
+	if claims.Type != "access" {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 		return
 	}
 
-	userIDStr, ok := claims["sub"].(string)
-	if !ok {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
-		return
-	}
-
-	userID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
-		return
-	}
-
-	ctx.Set(userIDKey, userID)
+	ctx.Set(userIDKey, claims.Subject)
 
 	ctx.Next()
+}
+
+func (s *Server) jwtSecretFunc(_ *jwt.Token) (interface{}, error) {
+	return []byte(s.cfg.JWT.Secret), nil
 }

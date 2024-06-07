@@ -10,6 +10,14 @@ import (
 	"github.com/sportgroup-hq/common-lib/validation"
 )
 
+// todo todo todo
+// аплоад медіа
+// GET /analytics/records?name=Присутність%20на%20тренуванні&group_id=1&start_at=2021-09-01&end_at=2021-09-30
+// екпорт в csv по, наприклад, присутності
+// чати
+// push-notifications
+// Емейл підтвердження
+
 func (s *Server) Start() error {
 	r := gin.Default()
 
