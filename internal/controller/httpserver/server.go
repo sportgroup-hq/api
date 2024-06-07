@@ -2,23 +2,13 @@ package httpserver
 
 import (
 	"log/slog"
-	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/sportgroup-hq/common-lib/validation"
 )
-
-// todo todo todo
-// аплоад медіа
-// GET /analytics/records?name=Присутність%20на%20тренуванні&group_id=1&start_at=2021-09-01&end_at=2021-09-30
-// екпорт в csv по, наприклад, присутності
-// чати
-// push-notifications
-// Емейл підтвердження
 
 func (s *Server) Start() error {
 	r := gin.Default()
@@ -28,14 +18,6 @@ func (s *Server) Start() error {
 	}
 
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           24 * time.Hour,
-	}))
 
 	addOpenAPIDocsRouter(r)
 
