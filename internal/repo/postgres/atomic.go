@@ -13,13 +13,13 @@ func (p *Postgres) Atomic(ctx context.Context, f func(tx repo.Atomic) error) err
 		return fmt.Errorf("failed to start transaction: %w", err)
 	}
 
-	if err = f(p.withTx(tx)); err != nil {
-		if err := tx.Rollback(); err != nil {
-			return fmt.Errorf("failed to rollback transaction: %w", err)
-		}
-
-		return fmt.Errorf("failed to execute atomic function: %w", err)
+	if err = f(p.withTx(tx)); err == nil {
+		return tx.Commit()
 	}
 
-	return tx.Commit()
+	if err = tx.Rollback(); err != nil {
+		return fmt.Errorf("failed to rollback transaction: %w", err)
+	}
+
+	return fmt.Errorf("failed to execute atomic function: %w", err)
 }
