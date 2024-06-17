@@ -79,7 +79,7 @@ func (s *Server) updateGroup(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, group)
+	ctx.JSON(http.StatusOK, group)
 }
 
 func (s *Server) joinGroup(ctx *gin.Context) {
@@ -114,7 +114,7 @@ func (s *Server) deleteGroup(ctx *gin.Context) {
 		return
 	}
 
-	ctx.AbortWithStatus(http.StatusOK)
+	ctx.AbortWithStatus(http.StatusNoContent)
 }
 
 func (s *Server) leaveGroup(ctx *gin.Context) {

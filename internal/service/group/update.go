@@ -14,7 +14,7 @@ func (s *Service) UpdateGroup(ctx context.Context, userID uuid.UUID, updateGroup
 		return nil, fmt.Errorf("failed to get group member: %w", err)
 	}
 
-	if groupMember.CanEditGroup() {
+	if !groupMember.CanEditGroup() {
 		return nil, models.ErrForbidden
 	}
 
